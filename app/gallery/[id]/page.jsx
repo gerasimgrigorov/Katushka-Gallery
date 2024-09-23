@@ -23,7 +23,7 @@ export default function PaintingPage({ params }) {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row my-4 max-w-screen-xl mx-auto p-4">
+      <div className="flex flex-col md:flex-row mb-4 mt-0 lg:mt-2 max-w-screen-xl mx-auto p-4">
         <div className="md:w-3/5 flex justify-center mb-4 md:mb-0">
           <Image
             src={painting.path}
@@ -39,7 +39,7 @@ export default function PaintingPage({ params }) {
             {painting.name}
           </h1>
           <p className="text-2xl text-gray-700 dark:text-gray-300 mb-2">
-            Price: <span className="font-semibold">{painting.price}</span>
+            Price: $<span className="font-semibold">{painting.price}</span>
           </p>
           <p className="text-xl text-gray-700 dark:text-gray-300 mb-2">
             Category: <span className="font-semibold">{painting.category}</span>
@@ -47,14 +47,17 @@ export default function PaintingPage({ params }) {
           <p className="text-lg text-gray-600 dark:text-gray-400">
             This painting represents a unique blend of emotions and thoughts. It captures the essence of the artist's vision, inviting viewers to explore the depth of creativity and imagination.
           </p>
+          <button className="mt-4 py-2 px-4 bg-purple-600 text-white font-semibold rounded-md shadow-lg hover:bg-purple-800 transition duration-300 w-full sm:w-1/2">
+            Add to Cart
+          </button>
         </div>
       </div>
 
       <h1 className="text-center text-3xl my-6">Related Paintings</h1>
-      <div className="grid py-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 px-2 gap-4 2xl:mx-12 sm:px-4 xl:px-14 ">
+      <div className="grid py-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 2xl:mx-12 px-0 md:px-12 xl:px-20">
         {relatedPaintings.map((relatedPainting) => (
           <Link key={relatedPainting.id} href={`/gallery/${relatedPainting.id}`}>
-            <div className="flex flex-col items-center mb-2">
+            <div className="flex flex-col items-center mb-2 transition-transform transform hover:scale-105">
               <Image
                 src={relatedPainting.path}
                 alt={relatedPainting.name}

@@ -14,7 +14,6 @@ export default function Page() {
   const [filteredPaintings, setFilteredPaintings] = useState(allPaintings);
 
   useEffect(() => {
-    // Set initial price range based on available paintings only on mount
     if (allPaintings.length > 0) {
       setMinPrice(Math.min(...allPaintings.map(p => p.price)));
       setMaxPrice(Math.max(...allPaintings.map(p => p.price)));
@@ -75,7 +74,7 @@ export default function Page() {
         
         <button 
           onClick={applyFilters} 
-          className="border rounded-lg p-2 bg-blue-500 text-white mb-1 md:mx-1 md:mb-2"
+          className="border rounded-lg p-2 bg-blue-500 text-white mx-4 mb-1 md:mx-1 md:mb-2"
         >
           Filter
         </button>
@@ -87,7 +86,7 @@ export default function Page() {
         <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 lg:grid-cols-4 px-2 gap-6 lg:gap-6 2xl:gap-2 2xl:mx-12 sm:px-4 xl:px-14">
           {filteredPaintings.map((painting) => (
             <Link key={painting.id} href={`/gallery/${painting.id}`}>
-              <div className="flex flex-col items-center mb-2 px-4 py-0 transition-transform transform hover:scale-105 cursor-pointer">
+              <div className="flex flex-col items-center mb-2 transition-transform transform hover:scale-105">
                 <Image
                   src={painting.path}
                   alt={painting.name}
