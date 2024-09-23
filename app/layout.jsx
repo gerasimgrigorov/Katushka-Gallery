@@ -8,7 +8,7 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
+import { FaInstagram, FaFacebook, FaXTwitter } from "react-icons/fa6";
 import "./globals.css";
 
 export const metadata = {
@@ -17,10 +17,10 @@ export const metadata = {
 };
 
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false },
+  { name: "Home", href: "#", current: false },
+  { name: "Gallery", href: "#", current: false },
+  { name: "Contact", href: "#", current: false },
+  // { name: "Calendar", href: "#", current: false },
 ];
 
 function classNames(...classes) {
@@ -31,135 +31,128 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Disclosure as="nav" className="bg-white">
-          <div className="mx-auto max-w-7xl px-2 sm:px-10 lg:px-14">
-            <div className="relative flex h-16 items-center justify-between">
-              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                {/* Mobile menu button*/}
-                <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                  <span className="absolute -inset-0.5" />
-                  <span className="sr-only">Open main menu</span>
-                  <Bars3Icon
-                    aria-hidden="true"
-                    className="block h-6 w-6 group-data-[open]:hidden"
-                  />
-                  <XMarkIcon
-                    aria-hidden="true"
-                    className="hidden h-6 w-6 group-data-[open]:block"
-                  />
-                </DisclosureButton>
-              </div>
-              <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                <div className="flex flex-shrink-0 items-center">
-                  {/* <img
+        <div className="my-1 sticky top-0 z-50">
+          <Disclosure as="nav" className="bg-white">
+            <div className="mx-auto max-w-7xl px-2 sm:px-10 lg:px-14">
+              <div className="normal-font-styling relative flex h-16 items-center justify-between">
+                <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                  {/* Mobile menu button*/}
+                  <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                    <span className="absolute -inset-0.5" />
+                    <span className="sr-only">Open main menu</span>
+                    <Bars3Icon
+                      aria-hidden="true"
+                      className="block h-6 w-6 group-data-[open]:hidden"
+                    />
+                    <XMarkIcon
+                      aria-hidden="true"
+                      className="hidden h-6 w-6 group-data-[open]:block"
+                    />
+                  </DisclosureButton>
+                </div>
+                <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                  <div className="flex flex-shrink-0 items-center ">
+                    {/* <img
                     alt="Your Company"
                     src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
                     className="h-8 w-auto"
                   /> */}
 
-                  {/* <div className="h-8 w-auto"> */}
-                  <svg
-                    width="40"
-                    height="40"
-                    viewBox="0 0 57 56"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <line
-                      x1="2.87868"
-                      y1="27.8787"
-                      x2="27.8787"
-                      y2="2.87868"
-                      stroke="#B80000"
-                      stroke-width="6"
-                    />
-                    <line
-                      x1="10.581"
-                      y1="22.3384"
-                      x2="41.6294"
-                      y2="53.3867"
-                      stroke="#B80000"
-                      stroke-width="6"
-                    />
-                    <line
-                      x1="31.5598"
-                      y1="30.4374"
-                      x2="54.5598"
-                      y2="44.4374"
-                      stroke="#B80000"
-                      stroke-width="6"
-                    />
-                    <path
-                      d="M26.4693 17.8284C28.0314 16.2663 30.5641 16.2663 32.1262 17.8284L35.1716 20.8739C36.7337 22.436 36.7337 24.9686 35.1716 26.5307L25.0208 36.6815L16.3185 27.9793L26.4693 17.8284Z"
-                      stroke="#B80000"
-                      stroke-width="6"
-                    />
-                    <path
-                      d="M10 3H46C49.866 3 53 6.13401 53 10V46C53 49.866 49.866 53 46 53H10C6.13401 53 3 49.866 3 46V10C3 6.13401 6.13401 3 10 3Z"
-                      stroke="#B80000"
-                      stroke-width="6"
-                    />
-                  </svg>
-                  {/* </div> */}
-                </div>
-                <div className="hidden sm:ml-6 sm:block">
-                  <div className="flex space-x-4">
-                    {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        aria-current={item.current ? "page" : undefined}
-                        className={classNames(
-                          item.current
-                            ? "bg-gray-600 text-white"
-                            : "text-black hover:bg-gray-600 hover:text-white",
-                          "rounded-md px-3 py-2 text-sm font-medium duration-300"
-                        )}
-                      >
-                        {item.name}
-                      </a>
-                    ))}
+                    {/* <div className="h-8 w-auto"> */}
+                    <svg
+                      width="52"
+                      height="52"
+                      viewBox="0 0 56 56"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M3 29.5274L28.6323 4.10484"
+                        stroke="#B80000"
+                        strokeWidth="7"
+                      />
+                      <path
+                        d="M10.5 22.5L41.9829 53.0332"
+                        stroke="#B80000"
+                        strokeWidth="7"
+                      />
+                      <path
+                        d="M31.8198 30.0103L54 43.5"
+                        stroke="#B80000"
+                        strokeWidth="7"
+                      />
+                      <path
+                        d="M27.0793 19.8251C28.6332 18.2549 31.1658 18.2416 32.7361 19.7955L35.8157 22.843C37.3859 24.3969 37.3992 26.9295 35.8453 28.4998L26.766 37.6747L18 29L27.0793 19.8251Z"
+                        stroke="#B80000"
+                        strokeWidth="7"
+                      />
+                      <path
+                        d="M10 3.5H46C49.5899 3.5 52.5 6.41015 52.5 10V46C52.5 49.5899 49.5899 52.5 46 52.5H10C6.41015 52.5 3.5 49.5899 3.5 46V10C3.5 6.41015 6.41015 3.5 10 3.5Z"
+                        stroke="#B80000"
+                        strokeWidth="7"
+                      />
+                    </svg>
+
+                    {/* </div> */}
+                  </div>
+                  <div className="hidden sm:ml-4 sm:block my-auto">
+                    <div className="flex space-x-3">
+                      {navigation.map((item) => (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          aria-current={item.current ? "page" : undefined}
+                          className={classNames(
+                            item.current
+                              ? "bg-gray-600 text-white"
+                              : "text-black hover:bg-gray-600 hover:text-white",
+                            "rounded-md px-3 py-2 text-sm font-medium duration-300"
+                          )}
+                        >
+                          {item.name}
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <div className="pr-2">
-                <button
-                  type="button"
-                  className="relative rounded-full bg-white p-1 text-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon aria-hidden="true" className="h-6 w-6" />
-                </button>
-                </div>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                  {/* <div className="pr-2">
+                    <button
+                      type="button"
+                      className="relative rounded-full bg-white p-1 text-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                    >
+                      <span className="absolute -inset-1.5" />
+                      <span className="sr-only">View notifications</span>
+                      <BellIcon aria-hidden="true" className="h-6 w-6" />
+                    </button>
+                  </div> */}
 
-                <div>
-                  <a
-                    href={"#"}
-                    // aria-current={item.current ? "page" : undefined}
-                    className={
-                      "text-black border border-current hover:bg-gray-600 hover:text-white rounded-md px-3 py-2 text-sm font-medium duration-300"
-                    }
-                  >
-                    Login
-                  </a>
-                </div>
+                  <div>
+                    <a
+                      href={"#"}
+                      // aria-current={item.current ? "page" : undefined}
+                      className={
+                        "text-black border border-current hover:bg-gray-600 hover:text-white rounded-md px-3 py-2 text-sm font-medium duration-300"
+                      }
+                    >
+                      Login
+                    </a>
+                  </div>
 
-                <div className="pl-2 hidden md:block">
-                  <a
-                    href={"#"}
-                    // aria-current={item.current ? "page" : undefined}
-                    className={
-                      "text-white bg-gray-600 hover:bg-gray-600 hover:text-white hover:bg-gray-900 rounded-md px-3 py-2 text-sm font-medium duration-300"
-                    }
-                  >
-                    Register
-                  </a>
-                </div>
+                  <div className="pl-2 hidden md:block">
+                    <a
+                      href={"#"}
+                      // aria-current={item.current ? "page" : undefined}
+                      className={
+                        "text-white bg-gray-600 hover:bg-gray-600 hover:text-white hover:bg-gray-900 rounded-md px-3 py-2 text-sm font-medium duration-300"
+                      }
+                    >
+                      Register
+                    </a>
+                  </div>
 
-                {/* Profile dropdown */}
-                {/* <Menu as="div" className="relative ml-3">
+                  {/* Profile dropdown */}
+                  {/* <Menu as="div" className="relative ml-3">
                   <div>
                     <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="absolute -inset-1.5" />
@@ -201,32 +194,102 @@ export default function RootLayout({ children }) {
                     </MenuItem>
                   </MenuItems>
                 </Menu> */}
+                </div>
               </div>
             </div>
-          </div>
 
-          <DisclosurePanel className="sm:hidden">
-            <div className="space-y-1 px-2 pb-3 pt-2">
-              {navigation.map((item) => (
-                <DisclosureButton
-                  key={item.name}
-                  as="a"
-                  href={item.href}
-                  aria-current={item.current ? "page" : undefined}
-                  className={classNames(
-                    item.current
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "block rounded-md px-3 py-2 text-base font-medium"
-                  )}
-                >
-                  {item.name}
-                </DisclosureButton>
-              ))}
-            </div>
-          </DisclosurePanel>
-        </Disclosure>
+            <DisclosurePanel className="sm:hidden">
+              <div className="space-y-1 px-2 pb-3 pt-2 normal-font-styling">
+                {navigation.map((item) => (
+                  <DisclosureButton
+                    key={item.name}
+                    as="a"
+                    href={item.href}
+                    aria-current={item.current ? "page" : undefined}
+                    className={classNames(
+                      item.current
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      "block rounded-md px-3 py-2 text-base font-medium"
+                    )}
+                  >
+                    {item.name}
+                  </DisclosureButton>
+                ))}
+              </div>
+            </DisclosurePanel>
+          </Disclosure>
+        </div>
         {children}
+
+        
+<footer className="bg-white rounded-lg shadow py-4 dark:bg-gray-800">
+  <div className="w-full mx-auto max-w-screen-xl flex flex-col items-center justify-center md:flex-row md:justify-between px-2 sm:px-10 lg:px-14">
+
+    <div className="flex items-center justify-center mb-4 md:mb-0">
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 56 56"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="mr-3"
+      >
+        <path d="M3 29.5274L28.6323 4.10484" stroke="#B80000" strokeWidth="7" />
+        <path d="M10.5 22.5L41.9829 53.0332" stroke="#B80000" strokeWidth="7" />
+        <path d="M31.8198 30.0103L54 43.5" stroke="#B80000" strokeWidth="7" />
+        <path
+          d="M27.0793 19.8251C28.6332 18.2549 31.1658 18.2416 32.7361 19.7955L35.8157 22.843C37.3859 24.3969 37.3992 26.9295 35.8453 28.4998L26.766 37.6747L18 29L27.0793 19.8251Z"
+          stroke="#B80000"
+          strokeWidth="7"
+        />
+        <path
+          d="M10 3.5H46C49.5899 3.5 52.5 6.41015 52.5 10V46C52.5 49.5899 49.5899 52.5 46 52.5H10C6.41015 52.5 3.5 49.5899 3.5 46V10C3.5 6.41015 6.41015 3.5 10 3.5Z"
+          stroke="#B80000"
+          strokeWidth="7"
+        />
+      </svg>
+
+      <span className="text-lg text-gray-700 dark:text-gray-200 font-semibold">
+        Katushka n Da Rats
+      </span>
+    </div>
+
+    <div className="flex space-x-4 justify-center">
+      <a
+        href="https://www.instagram.com/_katushka_00_/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-2 border border-gray-300 rounded-md text-gray-500 hover:text-red-600 hover:border-red-600 transition duration-300"
+      >
+        <FaInstagram size={22} />
+      </a>
+
+      <a
+        href="https://www.facebook.com/kam.rumenowa"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-2 border border-gray-300 rounded-md text-gray-500 hover:text-blue-600 hover:border-blue-600 transition duration-300"
+      >
+        <FaFacebook size={22} />
+      </a>
+
+      <a
+        href="https://x.com/katushkart442"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-2 border border-gray-300 rounded-md text-gray-500 hover:text-black hover:border-black transition duration-300"
+      >
+        <FaXTwitter size={22} />
+      </a>
+    </div>
+  </div>
+
+  <div className="text-center text-xs font-semibold text-gray-500 dark:text-gray-400 mt-4 normal-font-styling">
+    © 2024 Designed by Gerasim. All Rights Reserved.
+  </div>
+</footer>
+
       </body>
     </html>
   );
