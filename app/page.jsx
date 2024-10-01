@@ -66,12 +66,12 @@ export default function Page() {
                 beyond the ordinary,
                 <br /> embracing the beauty of the unknown."
               </p>
-              <a
+              <Link
                 href="/gallery"
                 className="px-6 py-3 m-1 bg-red-800 text-white rounded-full shadow-md hover:bg-red-600 duration-300"
               >
                 View All
-              </a>
+              </Link>
             </div>
           </div>
         </div>

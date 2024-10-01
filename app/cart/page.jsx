@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useUser } from "../utils/context/UserContext";
 
 const paintingsInCart = [
   {
@@ -25,7 +26,10 @@ const paintingsInCart = [
 ];
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState(paintingsInCart);
+  const {cart} = useUser()
+  console.log(cart)
+
+  const [cartItems, setCartItems] = useState(cart);
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
     email: "",

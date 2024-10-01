@@ -1,39 +1,102 @@
-"use client";
+"use client"
 
 import { useState } from "react";
+import { auth, db } from "../services/firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, getDocs, query, collection, where } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
+  const [error, setError] = useState("");
+  const router = useRouter()
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError(""); 
   };
 
-  const handleSubmit = (e) => {
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const checkIfUsernameExists = async (username) => {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("username", "==", username));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateEmail(formData.email)) {
+      setError("Invalid email format!");
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const usernameExists = await checkIfUsernameExists(formData.username);
+      if (usernameExists) {
+        setError("Username already exists!");
+        return;
+      }
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      const user = userCredential.user;
+
+      const userDoc = {
+        uid: user.uid,
+        username: formData.username,
+        email: user.email,
+      };
+
+      await setDoc(doc(db, "users", user.uid), userDoc);
+      router.push("/")
+
+      // alert("Registration successful!");
+
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        setError("Email already exists!");
+      } else {
+        setError(`Registration failed: ${error.message}`);
+      }
+    }
   };
 
   return (
     <div className="container mx-auto p-6 flex items-center my-auto justify-center">
       <div className="w-full max-w-md bg-white shadow-lg p-8 rounded-lg">
         <h2 className="text-3xl font-semibold text-center mb-6">Register</h2>
+        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col space-y-2">
-            <label htmlFor="name" className="block font-semibold">
-              Name:
+            <label htmlFor="username" className="block font-semibold">
+              Username:
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              placeholder="Your Name"
+              id="username"
+              name="username"
+              placeholder="Your Username"
               className="normal-font-styling border p-2 rounded-md"
-              value={formData.name}
+              value={formData.username}
               onChange={handleChange}
             />
           </div>

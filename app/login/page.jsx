@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; 
+import { login } from "../services/authFunctions";
 
 export default function Page() {
   const [formData, setFormData] = useState({
@@ -8,18 +10,50 @@ export default function Page() {
     password: "",
   });
 
+  const [error, setError] = useState(""); 
+  const router = useRouter(); 
+
+  const validateForm = () => {
+    if (!formData.email || !formData.password) {
+      setError("All fields are required.");
+      return false;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      setError("Please enter a valid email.");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
+    if (!validateForm()) return;
+
+    try {
+      await login(formData.email, formData.password);
+
+      router.push("/");
+    } catch (err) {
+      setError("Failed to log in. Please check your credentials.");
+    }
   };
 
   return (
     <div className="container mx-auto p-6 flex items-center my-auto justify-center">
       <div className="w-full max-w-md bg-white shadow-lg p-8 rounded-lg">
         <h2 className="text-3xl font-semibold text-center mb-6">Login</h2>
+
+        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col space-y-2">
             <label htmlFor="email" className="block font-semibold">
@@ -56,6 +90,7 @@ export default function Page() {
             Login
           </button>
         </form>
+
         <p className="text-center text-sm mt-4">
           Don't have an account?{" "}
           <a href="/register" className="text-red-800 hover:underline">

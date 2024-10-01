@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { imageGallery } from "@/app/utils/imageGallery";
 import Image from "next/image";
+import { useUser } from "@/app/utils/context/UserContext";
 
 export default function PaintingPage({ params }) {
   const { id } = params;
+  const { addToCart } = useUser()
 
   const painting = imageGallery.find((img) => img.id === id);
   
@@ -47,7 +49,7 @@ export default function PaintingPage({ params }) {
           <p className="text-lg text-gray-600 dark:text-gray-400">
             This painting represents a unique blend of emotions and thoughts. It captures the essence of the artist's vision, inviting viewers to explore the depth of creativity and imagination.
           </p>
-          <button className="mt-4 py-2 px-4 bg-purple-600 text-white font-semibold rounded-md shadow-lg hover:bg-purple-800 transition duration-300 w-full sm:w-1/2">
+          <button onClick={() => addToCart(painting)} className="mt-4 py-2 px-4 bg-purple-800 text-white font-semibold rounded-md shadow-lg hover:bg-purple-900 transition duration-300 w-full sm:w-2/5">
             Add to Cart
           </button>
         </div>
