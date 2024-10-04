@@ -67,7 +67,7 @@ export default function ContactForm() {
               Budget:
             </label>
             <div className="flex items-center">
-              <span className="normal-font-styling input-group-text border border-r-0 font-semibold rounded-md rounded-r-none p-2 bg-gray-100">
+              <span className="input-group-text border border-r-0 font-semibold rounded-md rounded-r-none p-2 bg-gray-100">
                 $
               </span>
               <input

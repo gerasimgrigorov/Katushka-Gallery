@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useUser } from "../utils/context/UserContext";
+import Link from "next/link";
 
 const paintingsInCart = [
   {
@@ -26,10 +27,11 @@ const paintingsInCart = [
 ];
 
 export default function CartPage() {
-  const {cart} = useUser()
-  console.log(cart)
+  const { cart, handleRemove } = useUser();
+  console.log(cart);
 
-  const [cartItems, setCartItems] = useState(cart);
+  const isEmpty = cart.length === 0;
+  console.log(isEmpty)
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
     email: "",
@@ -38,11 +40,7 @@ export default function CartPage() {
     additionalMessage: "",
   });
 
-  const handleRemove = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
-
-  const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
+  const totalPrice = cart.reduce((total, item) => total + item.price, 0);
   const shippingPrice = 6.99;
 
   return (
@@ -50,34 +48,44 @@ export default function CartPage() {
       <h1 className="text-3xl text-center mb-6">Your Cart</h1>
 
       <div className="flex flex-wrap justify-center gap-4 mb-6 px-4">
-        {cartItems.map((painting) => (
-          <div
-            key={painting.id}
-            className="flex flex-col items-center shadow-xl p-4 rounded-lg max-w-xs"
-          >
-            <Image
-              src={painting.path}
-              alt={painting.name}
-              width={260}
-              height={(painting.height / painting.width) * 260}
-              className="rounded-lg"
-            />
-            <p className="mt-2 text-lg">{painting.name}</p>
-            <p className="text-sm">${painting.price.toFixed(2)}</p>
-            <button
-              onClick={() => handleRemove(painting.id)}
-              className="mt-2 text-red-500 hover:text-red-700"
+        {isEmpty ? (
+          <p className="text-red-600">Your cart is empty.</p>
+        ) : (
+          cart.map((painting) => (
+            <div
+              key={painting.id}
+              className="flex flex-col items-center shadow-xl p-4 rounded-lg max-w-xs"
             >
-              Remove
-            </button>
-          </div>
-        ))}
+              <Link key={painting.id} href={`/gallery/${painting.id}`}>
+                <div className="text-center">
+                  <Image
+                    src={painting.path}
+                    alt={painting.name}
+                    width={260}
+                    height={(painting.height / painting.width) * 260}
+                    className="rounded-lg"
+                  />
+                  <p className="mt-2 text-lg">{painting.name}</p>
+                  <p className="text-sm">${painting.price.toFixed(2)}</p>
+                </div>
+              </Link>
+              <button
+                onClick={() => handleRemove(painting.id)}
+                className="mt-2 d-block text-red-500 hover:text-red-700"
+              >
+                Remove
+              </button>
+            </div>
+          ))
+        )}
       </div>
 
-      <h2 className="text-2xl text-center mb-4">Shipping Information</h2>
-      <form className="space-y-4 mb-6 max-w-lg mx-auto">
+      {!isEmpty && (<form className="space-y-4 mb-6 max-w-lg mx-auto">
+        <h2 className="text-2xl text-center mb-4">Shipping Information</h2>
         <div>
-          <label htmlFor="name" className="block font-semibold">Your Name:</label>
+          <label htmlFor="name" className="block font-semibold">
+            Your Name:
+          </label>
           <input
             type="text"
             id="name"
@@ -90,7 +98,9 @@ export default function CartPage() {
           />
         </div>
         <div>
-          <label htmlFor="email" className="block font-semibold">Your Email:</label>
+          <label htmlFor="email" className="block font-semibold">
+            Your Email:
+          </label>
           <input
             type="email"
             id="email"
@@ -103,7 +113,9 @@ export default function CartPage() {
           />
         </div>
         <div>
-          <label htmlFor="phone" className="block font-semibold">Your Phone Number:</label>
+          <label htmlFor="phone" className="block font-semibold">
+            Your Phone Number:
+          </label>
           <input
             type="tel"
             id="phone"
@@ -116,7 +128,9 @@ export default function CartPage() {
           />
         </div>
         <div>
-          <label htmlFor="address" className="block font-semibold">Shipping Address:</label>
+          <label htmlFor="address" className="block font-semibold">
+            Shipping Address:
+          </label>
           <input
             type="text"
             id="address"
@@ -129,7 +143,9 @@ export default function CartPage() {
           />
         </div>
         <div>
-          <label htmlFor="additionalMessage" className="block font-semibold">Additional Message (Optional):</label>
+          <label htmlFor="additionalMessage" className="block font-semibold">
+            Additional Message (Optional):
+          </label>
           <textarea
             id="additionalMessage"
             placeholder="Additional Message..."
@@ -154,10 +170,13 @@ export default function CartPage() {
             <p>Grand Total: ${(totalPrice + shippingPrice).toFixed(2)}</p>
           </div>
         </div>
-        <button className="w-full mt-4 py-2 bg-red-800 text-white rounded-md hover:bg-red-600">
+        <button
+          disabled={isEmpty}
+          className="w-full mt-4 py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-600"
+        >
           Checkout
         </button>
-      </form>
+      </form>)}
     </div>
   );
 }

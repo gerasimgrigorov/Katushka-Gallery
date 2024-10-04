@@ -64,6 +64,7 @@ export default function Register() {
         uid: user.uid,
         username: formData.username,
         email: user.email,
+        role: "customer"
       };
 
       await setDoc(doc(db, "users", user.uid), userDoc);
@@ -75,7 +76,8 @@ export default function Register() {
       if (error.code === "auth/email-already-in-use") {
         setError("Email already exists!");
       } else {
-        setError(`Registration failed: ${error.message}`);
+        console.dir(error)
+        setError(error.message);
       }
     }
   };

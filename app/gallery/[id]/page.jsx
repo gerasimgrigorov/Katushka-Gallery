@@ -7,7 +7,7 @@ import { useUser } from "@/app/utils/context/UserContext";
 
 export default function PaintingPage({ params }) {
   const { id } = params;
-  const { addToCart } = useUser()
+  const { addToCart, showAlert } = useUser()
 
   const painting = imageGallery.find((img) => img.id === id);
   
@@ -36,7 +36,7 @@ export default function PaintingPage({ params }) {
           />
         </div>
 
-        <div className="md:w-2/5 flex flex-col justify-center md:pl-8 lg:pl-0">
+        <div className="md:w-2/5 flex flex-col justify-center md:pl-8 lg:pl-4 xl:pl-0">
           <h1 className="text-4xl font-bold text-gray-800 text-center md:text-start dark:text-gray-200 mb-3">
             {painting.name}
           </h1>
@@ -68,6 +68,8 @@ export default function PaintingPage({ params }) {
                 className="shadow-lg"
               />
               <p className="mt-2 text-center text-lg">{relatedPainting.name}</p>
+              <p className="text-center text-sm">${relatedPainting.price.toFixed(2)}</p>
+
             </div>
           </Link>
         ))}
