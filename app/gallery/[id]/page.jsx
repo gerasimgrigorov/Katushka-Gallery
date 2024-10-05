@@ -12,12 +12,13 @@ export default function PaintingPage({ params }) {
   const painting = imageGallery.find((img) => img.id === id);
   
   const getRelatedPaintings = (category) => {
+    console.log(category)
     return imageGallery
       .filter((img) => img.category === category && img.id !== id)
       .slice(0, 4); 
   };
 
-  const relatedPaintings = getRelatedPaintings(painting.category);
+  // const relatedPaintings = getRelatedPaintings(painting.category);
 
   if (!painting) {
     return <div>Loading...</div>;
@@ -57,7 +58,7 @@ export default function PaintingPage({ params }) {
 
       <h1 className="text-center text-3xl my-6">Related Paintings</h1>
       <div className="grid py-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 2xl:mx-12 px-0 md:px-12 xl:px-20">
-        {relatedPaintings.map((relatedPainting) => (
+        {/* {relatedPaintings.map((relatedPainting) => (
           <Link key={relatedPainting.id} href={`/gallery/${relatedPainting.id}`}>
             <div className="flex flex-col items-center mb-2 transition-transform transform hover:scale-105">
               <Image
@@ -72,7 +73,7 @@ export default function PaintingPage({ params }) {
 
             </div>
           </Link>
-        ))}
+        ))} */}
       </div>
     </>
   );

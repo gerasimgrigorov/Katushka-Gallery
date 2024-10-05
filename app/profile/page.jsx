@@ -15,22 +15,23 @@ import {
   updateEmail,
   updatePassword,
   sendEmailVerification,
-  onAuthStateChanged,
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { useUser } from "../utils/context/UserContext"; // Importing the User Context
 
 export default function Profile() {
+  const { currentUser, showAlert } = useUser(); // Accessing currentUser from context
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    reauthPassword: "", // New field for re-authentication
+    reauthPassword: "",
   });
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
@@ -46,50 +47,24 @@ export default function Profile() {
           email: docSnap.data().email,
         }));
       } else {
-        setError("No user data found.");
+        showAlert("User data not found. It may have been deleted.");
+        router.push("/login");
       }
     } catch (err) {
       console.error(err);
       setError("Failed to fetch user data.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Check if the username already exists in Firestore
-  const checkIfUsernameExists = async (username) => {
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("username", "==", username));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
-  };
-
-  // Check if the email already exists in Firestore
-  const checkIfEmailExists = async (email) => {
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("email", "==", email));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
-  };
-
-  // Email validator
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-  };
-
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // If the user is authenticated, fetch the user data from Firestore
-        fetchUserData(user.uid);
-      } else {
-        // Redirect to login if no user is authenticated
-        router.push("/login");
-      }
-    });
-  
-    // Clean up the listener on component unmount
-    return () => unsubscribe();
-  }, [router]);
+    if (currentUser) {
+      fetchUserData(currentUser.uid);
+    } else {
+      router.push("/login");
+    }
+  }, [currentUser, router]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -100,7 +75,6 @@ export default function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const currentUser = auth.currentUser;
 
     // Input validations
     if (!validateEmail(formData.email)) {
@@ -128,21 +102,17 @@ export default function Profile() {
 
       // Handle email changes - Send verification before updating
       if (formData.email !== currentUser.email) {
-        // Send verification email for the new email address
         await sendEmailVerification(currentUser);
-        setError(
-          "A verification email has been sent to your email. Please verify before updating."
-        );
-
+        setError("A verification email has been sent. Please verify before updating.");
         setIsLoading(false);
-        return; // Stop here to wait for email verification
+        return;
       }
 
       // Re-authenticate the user before updating the password
       if (formData.password) {
         const credential = EmailAuthProvider.credential(
           currentUser.email,
-          formData.reauthPassword // Use the entered re-auth password
+          formData.reauthPassword
         );
         await reauthenticateWithCredential(currentUser, credential);
         await updatePassword(currentUser, formData.password);
@@ -163,25 +133,25 @@ export default function Profile() {
     }
   };
 
-  if (!formData.username || !formData.email) {
+  // While loading the component, show a loading message
+  if (isLoading) {
     return <p className="text-center mt-4">Loading...</p>;
+  }
+
+  // If the user data is not available, show an appropriate message
+  if (!formData.username || !formData.email) {
+    return <p className="text-center mt-4">User data not available.</p>;
   }
 
   return (
     <div className="container mx-auto p-6 flex items-center my-auto justify-center">
       <div className="w-full max-w-md bg-white shadow-lg p-8 rounded-lg">
-        <h2 className="text-3xl font-semibold text-center mb-6">
-          Update Profile
-        </h2>
+        <h2 className="text-3xl font-semibold text-center mb-6">Update Profile</h2>
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
-        {success && (
-          <p className="text-green-600 text-center mb-4">{success}</p>
-        )}
+        {success && <p className="text-green-600 text-center mb-4">{success}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col space-y-2">
-            <label htmlFor="username" className="block font-semibold">
-              Username:
-            </label>
+            <label htmlFor="username" className="block font-semibold">Username:</label>
             <input
               type="text"
               id="username"
@@ -195,9 +165,7 @@ export default function Profile() {
           </div>
 
           <div className="flex flex-col space-y-2">
-            <label htmlFor="email" className="block font-semibold">
-              Email:
-            </label>
+            <label htmlFor="email" className="block font-semibold">Email:</label>
             <input
               type="email"
               id="email"
@@ -226,9 +194,7 @@ export default function Profile() {
           </div>
 
           <div className="flex flex-col space-y-2">
-            <label htmlFor="confirmPassword" className="block font-semibold">
-              Confirm Password:
-            </label>
+            <label htmlFor="confirmPassword" className="block font-semibold">Confirm Password:</label>
             <input
               type="password"
               id="confirmPassword"

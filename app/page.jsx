@@ -70,7 +70,7 @@ export default function Page() {
                 href="/gallery"
                 className="px-6 py-3 m-1 bg-red-800 text-white rounded-full shadow-md hover:bg-red-600 duration-300"
               >
-                View All
+                Explore gallery
               </Link>
             </div>
           </div>

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Disclosure,
@@ -8,6 +8,7 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { IoCartOutline } from "react-icons/io5";
+import { RiAdminLine } from "react-icons/ri";
 import { useUser } from "../utils/context/UserContext";
 import { logout } from "../services/authFunctions";
 
@@ -60,7 +61,7 @@ export default function Navbar() {
                   <svg
                     width="52"
                     height="52"
-                    viewBox="0 0 57 56"
+                    viewBox="0 0 56 56"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -116,6 +117,12 @@ export default function Navbar() {
 
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <div className="relative pr-3">
+                <Link href={"/admin"}>
+                  <RiAdminLine aria-hidden="true" className="h-6 w-6" />
+                </Link>
+              </div>
+
+              <div className="relative pr-3">
                 <Link href={"/cart"}>
                   <IoCartOutline aria-hidden="true" className="h-6 w-6" />
                   {cart.length > 0 && (
@@ -140,7 +147,7 @@ export default function Navbar() {
                   <div className="pl-2 hidden md:block">
                     <button
                       onClick={handleLogout}
-                      className="text-white bg-gray-600 hover:bg-gray-600 hover:text-white hover:bg-gray-900 rounded-md px-3 py-2 text-sm font-medium duration-300"
+                      className="text-white bg-gray-600 hover:bg-gray-800 rounded-md px-3 py-2 text-sm font-medium duration-300"
                     >
                       Logout
                     </button>
@@ -160,7 +167,7 @@ export default function Navbar() {
                   <div className="pl-2 hidden md:block">
                     <Link
                       href={"/register"}
-                      className="text-white bg-gray-600 hover:bg-gray-600 hover:text-white hover:bg-gray-900 rounded-md px-3 py-2 text-sm font-medium duration-300"
+                      className="text-white bg-gray-600 hover:bg-gray-800 rounded-md px-3 py-2 text-sm font-medium duration-300"
                     >
                       Register
                     </Link>

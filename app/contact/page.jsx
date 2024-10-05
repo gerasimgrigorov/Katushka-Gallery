@@ -96,7 +96,7 @@ export default function ContactForm() {
             onChange={handleChange}
           />
         </div>
-        <button className="w-full mt-4 py-2 bg-red-800 text-white rounded-md transition duration-300 hover:bg-red-600">
+        <button className="style-the-button w-full mt-4 py-2 text-white rounded-md shadow-lg transition-all duration-300 ease-in-out transform">
           Send Message
         </button>
       </form>

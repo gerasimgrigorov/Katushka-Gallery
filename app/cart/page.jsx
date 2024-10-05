@@ -5,33 +5,33 @@ import Image from "next/image";
 import { useUser } from "../utils/context/UserContext";
 import Link from "next/link";
 
-const paintingsInCart = [
-  {
-    id: "14n15o",
-    path: "/images/Lost-in-the-dark.jpg",
-    name: "Lost in the dark",
-    width: 1080,
-    height: 1296,
-    price: 174.99,
-    category: "Fantasy",
-  },
-  {
-    id: "16p17q",
-    path: "/images/Magic-archer.jpg",
-    name: "Magic archer",
-    width: 1080,
-    height: 1080,
-    price: 139.99,
-    category: "Surrealism",
-  },
-];
+// const paintingsInCart = [
+//   {
+//     id: "14n15o",
+//     path: "/images/Lost-in-the-dark.jpg",
+//     name: "Lost in the dark",
+//     width: 1080,
+//     height: 1296,
+//     price: 174.99,
+//     category: "Fantasy",
+//   },
+//   {
+//     id: "16p17q",
+//     path: "/images/Magic-archer.jpg",
+//     name: "Magic archer",
+//     width: 1080,
+//     height: 1080,
+//     price: 139.99,
+//     category: "Surrealism",
+//   },
+// ];
 
 export default function CartPage() {
   const { cart, handleRemove } = useUser();
-  console.log(cart);
+  // console.log(cart);
 
   const isEmpty = cart.length === 0;
-  console.log(isEmpty)
+  // console.log(isEmpty)
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
     email: "",
@@ -170,9 +170,12 @@ export default function CartPage() {
             <p>Grand Total: ${(totalPrice + shippingPrice).toFixed(2)}</p>
           </div>
         </div>
+        <div className="rounded-md bg-purple-500">
+          <p className="normal-font-styling text-white text-center text-xs p-2 "><em>Currently, the only payment methon is cash on delivery. Be patient with your orders.</em></p>
+        </div>
         <button
           disabled={isEmpty}
-          className="w-full mt-4 py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-600"
+          className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-600"
         >
           Checkout
         </button>
