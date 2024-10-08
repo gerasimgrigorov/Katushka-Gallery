@@ -1,38 +1,47 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getAllPaintings } from "../utils/getAllPaintings";
 import { db } from "../services/firebaseConfig";
 import { getDocs, collection } from "firebase/firestore";
-import { imageGallery } from "../utils/imageGallery";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Page() {
-  const allPaintings = getAllPaintings(imageGallery);
   const [paintings, setPaintings] = useState([]);
+  const [filteredPaintings, setFilteredPaintings] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
-  const [filteredPaintings, setFilteredPaintings] = useState(allPaintings);
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     async function fetchPaintings() {
+      setLoading(true); // Set loading to true before fetching
       const querySnapshot = await getDocs(collection(db, "paintings"));
       const paintingsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
-      console.log(paintingsData);
       setPaintings(paintingsData);
+      setFilteredPaintings(paintingsData); // Initialize filtered paintings with all paintings
+
+      // Extract unique categories
+      const uniqueCategories = [
+        ...new Set(paintingsData.map((painting) => painting.category)),
+      ];
+      setCategories(uniqueCategories);
+
+      // Set initial price range
+      if (paintingsData.length > 0) {
+        setMinPrice(Math.min(...paintingsData.map((p) => p.price)));
+        setMaxPrice(Math.max(...paintingsData.map((p) => p.price)));
+      }
+      setLoading(false); // Set loading to false after fetching
     }
 
     fetchPaintings();
-    if (allPaintings.length > 0) {
-      setMinPrice(Math.min(...allPaintings.map((p) => p.price)));
-      setMaxPrice(Math.max(...allPaintings.map((p) => p.price)));
-    }
   }, []);
 
   const handleCategoryChange = (e) => {
@@ -48,7 +57,7 @@ export default function Page() {
   };
 
   const applyFilters = () => {
-    const filtered = allPaintings.filter((painting) => {
+    const filtered = paintings.filter((painting) => {
       const inPriceRange =
         painting.price >= minPrice && painting.price <= maxPrice;
       const inCategory =
@@ -68,9 +77,11 @@ export default function Page() {
           className="border rounded-lg p-2 mx-4 mb-1 md:mx-1 md:mb-2"
         >
           <option value="all">All Categories</option>
-          <option value="Surrealism">Surrealism</option>
-          <option value="Abstract">Abstract</option>
-          <option value="Fantasy">Fantasy</option>
+          {categories.map((category, index) => (
+            <option key={index} value={category}>
+              {category}
+            </option>
+          ))}
         </select>
 
         <input
@@ -97,10 +108,12 @@ export default function Page() {
         </button>
       </div>
 
-      {paintings.length > 0 ? (
-        <div>
-          {paintings.map((painting) => {
-            return <Link key={painting.id} href={`/gallery/${painting.id}`}>
+      {loading ? (
+        <p>Loading paintings...</p>
+      ) : filteredPaintings.length > 0 ? (
+        <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 lg:grid-cols-4 px-2 gap-6 lg:gap-6 2xl:gap-2 2xl:mx-12 sm:px-4 xl:px-14">
+          {filteredPaintings.map((painting) => (
+            <Link key={painting.id} href={`/gallery/${painting.id}`}>
               <div className="flex flex-col items-center mb-2 transition-transform transform hover:scale-105">
                 <Image
                   src={painting.imageUrl}
@@ -110,39 +123,13 @@ export default function Page() {
                   className="shadow-lg"
                 />
                 <p className="mt-2 text-center text-lg">{painting.name}</p>
-                <p className="text-center text-sm">
-                  ${painting.price.toFixed(2)}
-                </p>
-              </div>
-            </Link>;
-          })}
-        </div>
-      ) : (
-        <p>Something went wrong. Cannot fetch the paintings.</p>
-      )}
-
-      {filteredPaintings.length === 0 ? (
-        <p>No results found. Please adjust your filters.</p>
-      ) : (
-        <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 lg:grid-cols-4 px-2 gap-6 lg:gap-6 2xl:gap-2 2xl:mx-12 sm:px-4 xl:px-14">
-          {filteredPaintings.map((painting) => (
-            <Link key={painting.id} href={`/gallery/${painting.id}`}>
-              <div className="flex flex-col items-center mb-2 transition-transform transform hover:scale-105">
-                <Image
-                  src={painting.path}
-                  alt={painting.name}
-                  width={260}
-                  height={260}
-                  className="shadow-lg"
-                />
-                <p className="mt-2 text-center text-lg">{painting.name}</p>
-                <p className="text-center text-sm">
-                  ${painting.price.toFixed(2)}
-                </p>
+                <p className="text-center text-sm">${painting.price.toFixed(2)}</p>
               </div>
             </Link>
           ))}
         </div>
+      ) : (
+        <p>No results found. Please adjust your filters.</p>
       )}
     </div>
   );

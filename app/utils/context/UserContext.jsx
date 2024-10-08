@@ -64,7 +64,7 @@ export default function UserProvider({ children }) {
 
   return (
     <UserContext.Provider
-      value={{ currentUser, cart, addToCart, showAlert, handleRemove }}
+      value={{ currentUser, cart, setCart, addToCart, showAlert, handleRemove }}
     >
       <div className="fixed bottom-5 left-5 z-50">
         {alert && (

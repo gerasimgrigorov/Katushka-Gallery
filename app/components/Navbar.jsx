@@ -11,6 +11,7 @@ import { IoCartOutline } from "react-icons/io5";
 import { RiAdminLine } from "react-icons/ri";
 import { useUser } from "../utils/context/UserContext";
 import { logout } from "../services/authFunctions";
+import { useRouter } from "next/navigation";
 
 const navigation = [
   { name: "Home", href: "/", current: false },
@@ -24,9 +25,11 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const { currentUser, cart } = useUser();
+  const router = useRouter()
 
   async function handleLogout() {
     try {
+      router.push("/")
       await logout();
     } catch (e) {
       console.log("Logout failed: ", e);
@@ -116,11 +119,13 @@ export default function Navbar() {
             </div>
 
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <div className="relative pr-3">
-                <Link href={"/admin"}>
-                  <RiAdminLine aria-hidden="true" className="h-6 w-6" />
-                </Link>
-              </div>
+              {currentUser && currentUser.role === "admin" && (
+                <div className="relative pr-3">
+                  <Link href={"/admin"}>
+                    <RiAdminLine aria-hidden="true" className="h-6 w-6" />
+                  </Link>
+                </div>
+              )}
 
               <div className="relative pr-3">
                 <Link href={"/cart"}>

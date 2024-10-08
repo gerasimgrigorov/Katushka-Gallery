@@ -106,8 +106,8 @@ export default function ManageUsers() {
   
 
   return (
-    <div>
-      <h2 className="text-3xl text-center mb-6">Manage Users</h2>
+    <div className="p-4 max-w-4xl mx-auto">
+      {/* <h2 className="text-2xl text-center mb-4">Manage Users</h2> */}
 
       <h3 className="text-2xl mb-4">User List</h3>
       {isLoading ? (
@@ -117,24 +117,24 @@ export default function ManageUsers() {
           {users.map((user) => (
             <li
               key={user.id}
-              className="flex justify-between items-center border p-4 rounded-md shadow-sm"
+              className="flex flex-col sm:flex-row justify-between items-center border p-4 rounded-md shadow-sm"
             >
               <div>
-                <strong>{user.name}</strong> <br />
+                <strong>{user.username}</strong> <br />
                 <span>{user.email}</span>
               </div>
               <div>
                 <select
                   value={user.role}
                   onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                  className="border p-2 rounded-md"
+                  className="border p-2 sm:mx-0 rounded-md w-full sm:w-auto"
                 >
                   <option value="customer">Customer</option>
                   <option value="admin">Admin</option>
                 </select>
                 <button
                   onClick={() => handleDeleteUser(user.id)}
-                  className="ml-4 bg-red-500 text-white p-2 rounded-md"
+                  className="sm:ml-4 mt-2 sm:mt-0 bg-red-500 text-white p-2 rounded-md w-full sm:w-auto"
                 >
                   Delete
                 </button>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import AddPainting from "../components/ManagePaintings"; // Import the AddPainting component
 import ManageUsers from "../components/ManageUsers"; // Placeholder for Manage Users
 import withAdminProtection from "../utils/withAdminProtection";
-// import ManageOrders from "./ManageOrders"; // Placeholder for Manage Orders
+import ManageOrders from "../components/ManageOrders"; // Placeholder for Manage Orders
 
 function Page() {
   const [activeTab, setActiveTab] = useState("managePaintings"); // Default active tab
@@ -24,8 +24,8 @@ function Page() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-4xl text-center mb-6">Admin Panel</h1>
-      <div className="flex justify-around sm:justify-center mb-2">
+      <h1 className="text-4xl text-center mb-4">Admin Panel</h1>
+      <div className="flex justify-around sm:justify-center mb-4">
         <button
           className={`px-3 mr-1 sm:mr-2 py-2 rounded-md text-sm sm:text-md ${
             activeTab === "managePaintings"
@@ -58,7 +58,7 @@ function Page() {
         </button>
       </div>
 
-      <div className="bg-white px-4 rounded-md shadow-md">
+      <div className="bg-white">
         {renderActiveTab()}
       </div>
     </div>

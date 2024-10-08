@@ -35,6 +35,10 @@ body {
   background-color: #671b7a;
 }
 
+.cart-painting{
+  max-width: 296px;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
