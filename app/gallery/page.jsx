@@ -114,7 +114,7 @@ export default function Page() {
         <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 lg:grid-cols-4 px-2 gap-6 lg:gap-6 2xl:gap-2 2xl:mx-12 sm:px-4 xl:px-14">
           {filteredPaintings.map((painting) => (
             <Link key={painting.id} href={`/gallery/${painting.id}`}>
-              <div className="flex flex-col items-center mb-2 transition-transform transform hover:scale-105">
+              <div className="relative flex flex-col items-center mb-2 transition-transform transform hover:scale-105">
                 <Image
                   src={painting.imageUrl}
                   alt={painting.name}
@@ -124,6 +124,7 @@ export default function Page() {
                 />
                 <p className="mt-2 text-center text-lg">{painting.name}</p>
                 <p className="text-center text-sm">${painting.price.toFixed(2)}</p>
+                {(painting.status === "Sold" || painting.status === "Ordered") && <div className="absolute top-2 left-8 text-white px-2 rounded-md bg-red-500">{painting.status}</div>}
               </div>
             </Link>
           ))}

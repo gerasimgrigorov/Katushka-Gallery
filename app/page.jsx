@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { getRandomPaintings } from "./utils/getRandomPaintings";
+import { db } from "./services/firebaseConfig";
+import { getDocs, doc } from "firebase/firestore";
 import { imageGallery } from "./utils/imageGallery";
 import Link from "next/link";
 
@@ -9,6 +11,26 @@ import Link from "next/link";
 // }
 
 export default function Page() {
+  // const [paintings, setPaintings] = useState([])
+
+  // useEffect(() => {
+  //   async function getPaintings() {
+  //     const querySnapshot = await getDocs(collection(db, "paintings"));
+  //     const paintingsData = querySnapshot.docs.map((doc) => ({
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     }));
+
+  //     // Shuffle the paintings array and get 8 random paintings
+  //     const shuffledPaintings = paintingsData.sort(() => 0.5 - Math.random());
+  //     const randomPaintings = shuffledPaintings.slice(0, 8);
+      
+  //     setPaintings(randomPaintings);
+  //   }
+
+  //   getPaintings();
+  // }, []);
+
   const featuredPaintings = getRandomPaintings(imageGallery, 8);
 
   return (
@@ -36,7 +58,7 @@ export default function Page() {
 
             <div className="flex my-auto flex-col items-center relative">
               <Image
-                src="/images/Inside-out.jpg"
+                src="https://firebasestorage.googleapis.com/v0/b/kami-gallery.appspot.com/o/paintings%2FInside-out.jpg?alt=media&token=8be16280-7e6f-4a5e-9ce7-b2f2da1afb97"
                 alt="Central Painting"
                 width={540}
                 height={648}

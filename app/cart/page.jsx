@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const router = useRouter();
-  const { cart, handleRemove, setCart, showAlert } = useUser();
+  const { cart, removeFromCart, setCart, showAlert } = useUser();
   const isEmpty = cart.length === 0;
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
@@ -98,10 +98,10 @@ export default function CartPage() {
               <Link key={painting.id} href={`/gallery/${painting.id}`}>
                 <div className="text-center">
                   <Image
-                    src={painting.path}
+                    src={painting.imageUrl}
                     alt={painting.name}
                     width={260}
-                    height={Math.min(painting.height, 260)}
+                    height={260}
                     className="rounded-lg"
                   />
                   <p className="mt-2 text-lg text-clip">{painting.name}</p>
@@ -109,7 +109,7 @@ export default function CartPage() {
                 </div>
               </Link>
               <button
-                onClick={() => handleRemove(painting.id)}
+                onClick={() => removeFromCart(painting.id)}
                 className="mt-2 d-block text-red-500 hover:text-red-700"
               >
                 Remove
@@ -142,7 +142,7 @@ export default function CartPage() {
               }
             />
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name}</p>
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
             )}
           </div>
 
@@ -162,7 +162,7 @@ export default function CartPage() {
               }
             />
             {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email}</p>
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
             )}
           </div>
 
@@ -183,7 +183,7 @@ export default function CartPage() {
                 }
               />
               {errors.zip && (
-                <p className="text-red-500 text-sm">{errors.zip}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.zip}</p>
               )}
             </div>
 
@@ -202,7 +202,7 @@ export default function CartPage() {
                 }
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm">{errors.phone}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
               )}
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function CartPage() {
               }
             />
             {errors.address && (
-              <p className="text-red-500 text-sm">{errors.address}</p>
+              <p className="text-red-500 text-sm mt-1">{errors.address}</p>
             )}
           </div>
 

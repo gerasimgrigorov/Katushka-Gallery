@@ -18,9 +18,13 @@ export default function UserProvider({ children }) {
   const [alert, setAlert] = useState(null);
   const pathname = usePathname(); // get the current path
 
-  function handleRemove(id) {
-    setCart(cart.filter((item) => item.id !== id));
-  }
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cart")
+
+    if(storedCart){
+      setCart(JSON.parse(storedCart))
+    }
+  }, [])
 
   function showAlert(message, type = "default") {
     setAlert({ message, type });
@@ -29,6 +33,13 @@ export default function UserProvider({ children }) {
       setAlert(null);
     }, 3000);
   }
+
+  function removeFromCart(id) {
+    const updatedCart = (cart.filter((item) => item.id !== id));
+    setCart(updatedCart)
+    localStorage.setItem("cart", JSON.stringify(updatedCart))
+  }
+
 
   function addToCart(painting) {
     const alreadyAdded = cart.find(
@@ -40,7 +51,14 @@ export default function UserProvider({ children }) {
       return;
     }
 
-    setCart((prevState) => [...prevState, painting]);
+    if(cart.length === 3){
+      showAlert("The maximumm quantity is 3.")
+      return
+    }
+
+    const updatedCart = [...cart, painting];
+    setCart(updatedCart)
+    localStorage.setItem("cart", JSON.stringify(updatedCart))
   }
 
   useEffect(() => {
@@ -64,7 +82,7 @@ export default function UserProvider({ children }) {
 
   return (
     <UserContext.Provider
-      value={{ currentUser, cart, setCart, addToCart, showAlert, handleRemove }}
+      value={{ currentUser, cart, setCart, addToCart, showAlert, removeFromCart }}
     >
       <div className="fixed bottom-5 left-5 z-50">
         {alert && (

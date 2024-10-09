@@ -3,16 +3,21 @@
 import Link from "next/link";
 import { db } from "@/app/services/firebaseConfig";
 import { getDoc, doc } from "firebase/firestore";
+import {useRouter} from "next/navigation";
 // import { imageGallery } from "@/app/utils/imageGallery";
 import Image from "next/image";
 import { useUser } from "@/app/utils/context/UserContext";
 import { useEffect, useState } from "react";
 
 export default function PaintingPage({ params }) {
+  const { showAlert } = useUser();
   const { id } = params;
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true); // Initialize loading to true
   const [painting, setPainting] = useState(null); // Start with null until data is fetched
   const { addToCart } = useUser();
+  // const paintingInProcess = painting.status === "Sold" || painting.status === "Ordered"
+  console.log(painting);
 
   useEffect(() => {
     const fetchPainting = async () => {
@@ -49,7 +54,9 @@ export default function PaintingPage({ params }) {
   }
 
   if (!painting) {
-    return <p className="text-center">Painting not found.</p>; // Handle case where painting is null
+    showAlert("This painting does not exist.");
+    router.push("/");
+    return;
   }
 
   return (
@@ -59,13 +66,18 @@ export default function PaintingPage({ params }) {
           <Image
             src={painting.imageUrl}
             alt={painting.name}
-            width={500}
-            height={500}
+            width={painting.width ? painting.width * 0.47 : 550}
+            height={painting.height ? painting.height * 0.47 : 550}
             className="shadow-lg rounded-lg"
           />
         </div>
 
         <div className="md:w-2/5 flex flex-col justify-center md:pl-8 lg:pl-4 xl:pl-0">
+          {(painting.status === "Sold" || painting.status === "Ordered") && (
+            <p className="text-white px-3 text-lg mb-2 ml-auto md:ml-0 mr-auto rounded-md bg-red-500">
+              {painting.status}
+            </p>
+          )}
           <h1 className="text-4xl font-bold text-gray-800 text-center md:text-start dark:text-gray-200 mb-3">
             {painting.name}
           </h1>
@@ -81,8 +93,11 @@ export default function PaintingPage({ params }) {
               : "This painting represents a unique blend of emotions and thoughts. It captures the essence of the artist's vision, inviting viewers to explore the depth of creativity and imagination."}
           </p>
           <button
+            disabled={
+              painting.status === "Sold" || painting.status === "Ordered"
+            }
             onClick={() => addToCart(painting)}
-            className="mt-4 py-2 px-4 bg-purple-800 text-white font-semibold rounded-md shadow-lg hover:bg-purple-900 transition duration-300 w-full sm:w-3/5 lg:w-2/5"
+            className="mt-4 py-2 px-4 bg-purple-800 text-white font-semibold rounded-md shadow-lg hover:bg-purple-900 disabled:bg-gray-500 transition duration-300 w-full sm:w-3/5 lg:w-2/5"
           >
             Add to Cart
           </button>
