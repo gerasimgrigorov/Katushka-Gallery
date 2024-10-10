@@ -1,59 +1,50 @@
-import Image from "next/image";
-import { getRandomPaintings } from "./utils/getRandomPaintings";
-import { db } from "./services/firebaseConfig";
-import { getDocs, doc } from "firebase/firestore";
-import { imageGallery } from "./utils/imageGallery";
-import Link from "next/link";
+"use client";
 
-// function getRandomPaintings(imageGallery, num) {
-//   const shuffled = [...imageGallery].sort(() => 0.5 - Math.random());
-//   return shuffled.slice(0, num);
-// }
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { db } from "./services/firebaseConfig";
+import { getRandomPaintings } from "./utils/getRandomPaintings";
+import { collection, getDocs } from "firebase/firestore";
+import Link from "next/link";
+import HeroSection from "./components/HeroSection";
 
 export default function Page() {
-  // const [paintings, setPaintings] = useState([])
+  const [paintings, setPaintings] = useState([]);
 
-  // useEffect(() => {
-  //   async function getPaintings() {
-  //     const querySnapshot = await getDocs(collection(db, "paintings"));
-  //     const paintingsData = querySnapshot.docs.map((doc) => ({
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     }));
+  useEffect(() => {
+    async function getPaintings() {
+      const querySnapshot = await getDocs(collection(db, "paintings"));
+      const paintingsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-  //     // Shuffle the paintings array and get 8 random paintings
-  //     const shuffledPaintings = paintingsData.sort(() => 0.5 - Math.random());
-  //     const randomPaintings = shuffledPaintings.slice(0, 8);
-      
-  //     setPaintings(randomPaintings);
-  //   }
+      setPaintings(getRandomPaintings(paintingsData, 8));
+    }
 
-  //   getPaintings();
-  // }, []);
-
-  const featuredPaintings = getRandomPaintings(imageGallery, 8);
+    getPaintings();
+  }, []);
 
   return (
     <div className="my-1 items-center justify-center">
       <div className="container mx-auto px-2 sm:px-10 lg:px-14">
-        {/* Hero */}
-        <div className="relative flex items-center justify-center py-6 lg:py-0">
+        <HeroSection />
+
+        {/* Hero Section */}
+        {/* <div className="relative flex items-center justify-center py-6 lg:py-0">
           <div className="grid lg:grid-cols-[1fr_1.5fr_1fr] gap-2 sm:gap-4">
             <div className="flex my-auto flex-col gap-2 sm:gap-4 items-end hidden lg:flex">
-              <Image
-                src="/images/Old-scars.jpg"
-                alt="Painting 1"
-                width={280}
-                height={280}
-                className="rounded-lg shadow-lg"
-              />
-              <Image
-                src="/images/Magic-archer.jpg"
-                alt="Painting 2"
-                width={280}
-                height={280}
-                className="rounded-lg shadow-lg"
-              />
+              {surroundingPaintings.slice(0, 2).map((painting) => (
+                <div className={`${styles.fade} ${styles.fadeIn}`} key={painting.id}>
+                  <Image
+                    src={painting.imageUrl}
+                    alt={painting.name}
+                    width={280}
+                    height={280}
+                    className="rounded-lg shadow-lg"
+                  />
+                </div>
+              ))}
             </div>
 
             <div className="flex my-auto flex-col items-center relative">
@@ -67,20 +58,17 @@ export default function Page() {
             </div>
 
             <div className="flex my-auto flex-col gap-2 sm:gap-4 items-start hidden lg:flex">
-              <Image
-                src="/images/Movie-night.jpg"
-                alt="Painting 3"
-                width={280}
-                height={280}
-                className="rounded-lg shadow-lg"
-              />
-              <Image
-                src="/images/Doodies.jpg"
-                alt="Painting 4"
-                width={280}
-                height={280}
-                className="rounded-lg shadow-lg"
-              />
+              {surroundingPaintings.slice(2, 4).map((painting) => (
+                <div className={`${styles.fade} ${styles.fadeIn}`} key={painting.id}>
+                  <Image
+                    src={painting.imageUrl}
+                    alt={painting.name}
+                    width={280}
+                    height={280}
+                    className="rounded-lg shadow-lg"
+                  />
+                </div>
+              ))}
             </div>
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-70 rounded-lg">
               <p className="text-black text-center mb-1">
@@ -96,17 +84,16 @@ export default function Page() {
               </Link>
             </div>
           </div>
-        </div>
+        </div> */}
+
+        {/* Featured section */}
         <h1 className="text-center text-3xl my-6">Featured</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 px-2 gap-6 lg:gap-4 2xl:gap-0 2xl:mx-12 sm:px-0 xl:px-14 ">
-          {featuredPaintings.map((painting) => (
+          {paintings.map((painting) => (
             <Link key={painting.id} href={`/gallery/${painting.id}`}>
-              <div
-                key={painting.id}
-                className="flex flex-col items-center mb-2 px-4 py-2 transition-transform transform hover:scale-105 cursor-pointer"
-              >
+              <div className="flex flex-col items-center mb-2 px-4 py-2 transition-transform transform hover:scale-105 cursor-pointer">
                 <Image
-                  src={painting.path}
+                  src={painting.imageUrl}
                   alt={painting.name}
                   width={260}
                   height={260}
@@ -118,6 +105,8 @@ export default function Page() {
           ))}
         </div>
       </div>
+
+      {/* Artist Biography */}
       <div className="flex flex-col-reverse lg:flex-row items-center bg-gray-200 my-6 px-12 md:px-16 lg:px-20 py-8">
         <div className="flex justify-center lg:w-1/3">
           <Image

@@ -22,7 +22,7 @@ export default function ManagePaintings() {
     price: "",
     category: "",
     description: "",
-    image: null, // To store the selected image
+    image: null,
   });
 
   const [uploadProgress, setUploadProgress] = useState(0);

@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { db } from "@/app/services/firebaseConfig";
-import { getDoc, doc } from "firebase/firestore";
-import {useRouter} from "next/navigation";
-// import { imageGallery } from "@/app/utils/imageGallery";
+import { db } from "../../services/firebaseConfig";
+import { getDoc, doc, getDocs, collection, query, where, limit } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useUser } from "@/app/utils/context/UserContext";
 import { useEffect, useState } from "react";
@@ -13,11 +12,10 @@ export default function PaintingPage({ params }) {
   const { showAlert } = useUser();
   const { id } = params;
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true); // Initialize loading to true
-  const [painting, setPainting] = useState(null); // Start with null until data is fetched
+  const [isLoading, setIsLoading] = useState(true);
+  const [painting, setPainting] = useState(null);
+  const [relatedPaintings, setRelatedPaintings] = useState([]);
   const { addToCart } = useUser();
-  // const paintingInProcess = painting.status === "Sold" || painting.status === "Ordered"
-  console.log(painting);
 
   useEffect(() => {
     const fetchPainting = async () => {
@@ -25,29 +23,69 @@ export default function PaintingPage({ params }) {
         const foundPainting = doc(db, "paintings", id);
         const paintingDoc = await getDoc(foundPainting);
         if (paintingDoc.exists()) {
-          setPainting({
+          const paintingData = {
             id: paintingDoc.id,
             ...paintingDoc.data(),
-          });
+          };
+          setPainting(paintingData);
+          await fetchRelatedPaintings(paintingData.category, paintingData.id);
         } else {
           console.error("No such painting!");
         }
       } catch (error) {
         console.error("Error fetching painting:", error);
       } finally {
-        setIsLoading(false); // Set loading to false regardless of success or failure
+        setIsLoading(false);
+      }
+    };
+
+    const fetchRelatedPaintings = async (category, currentPaintingId) => {
+      try {
+        const relatedQuery = query(
+          collection(db, "paintings"),
+          where("category", "==", category),
+          limit(4)
+        );
+        const querySnapshot = await getDocs(relatedQuery);
+        const relatedResults = querySnapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter((painting) => painting.id !== currentPaintingId); 
+
+        if (relatedResults.length < 4) {
+          const additionalNeeded = 4 - relatedResults.length;
+
+          const fallbackQuery = query(
+            collection(db, "paintings"),
+            limit(additionalNeeded) 
+          );
+          const fallbackSnapshot = await getDocs(fallbackQuery);
+          const fallbackResults = fallbackSnapshot.docs
+            .map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+            .filter((painting) => 
+              painting.id !== currentPaintingId && 
+              !relatedResults.some(rp => rp.id === painting.id) 
+            );
+
+          const combinedResults = [...relatedResults, ...fallbackResults].slice(0, 4);
+          setRelatedPaintings(combinedResults);
+        } else {
+          setRelatedPaintings(relatedResults);
+        }
+      } catch (error) {
+        console.error("Error fetching related paintings:", error);
       }
     };
 
     fetchPainting();
   }, [id]);
 
-  const getRelatedPaintings = (category) => {
-    console.log(category);
-    return imageGallery
-      .filter((img) => img.category === category && img.id !== id)
-      .slice(0, 4);
-  };
+  console.log(relatedPaintings);
 
   if (isLoading) {
     return <p className="text-center">Loading...</p>;
@@ -69,6 +107,7 @@ export default function PaintingPage({ params }) {
             width={painting.width ? painting.width * 0.47 : 550}
             height={painting.height ? painting.height * 0.47 : 550}
             className="shadow-lg rounded-lg"
+            priority={true}
           />
         </div>
 
@@ -93,9 +132,7 @@ export default function PaintingPage({ params }) {
               : "This painting represents a unique blend of emotions and thoughts. It captures the essence of the artist's vision, inviting viewers to explore the depth of creativity and imagination."}
           </p>
           <button
-            disabled={
-              painting.status === "Sold" || painting.status === "Ordered"
-            }
+            disabled={painting.status === "Sold" || painting.status === "Ordered"}
             onClick={() => addToCart(painting)}
             className="mt-4 py-2 px-4 bg-purple-800 text-white font-semibold rounded-md shadow-lg hover:bg-purple-900 disabled:bg-gray-500 transition duration-300 w-full sm:w-3/5 lg:w-2/5"
           >
@@ -104,14 +141,14 @@ export default function PaintingPage({ params }) {
         </div>
       </div>
 
+      {/* Related Paintings Section */}
       <h1 className="text-center text-3xl my-6">Related Paintings</h1>
       <div className="grid py-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 2xl:mx-12 px-0 md:px-12 xl:px-20">
-        {/* Uncomment and implement related paintings logic here */}
-        {/* {relatedPaintings.map((relatedPainting) => (
+        {relatedPaintings.map((relatedPainting) => (
           <Link key={relatedPainting.id} href={`/gallery/${relatedPainting.id}`}>
             <div className="flex flex-col items-center mb-2 transition-transform transform hover:scale-105">
               <Image
-                src={relatedPainting.path}
+                src={relatedPainting.imageUrl}
                 alt={relatedPainting.name}
                 width={280}
                 height={280}
@@ -121,7 +158,7 @@ export default function PaintingPage({ params }) {
               <p className="text-center text-sm">${relatedPainting.price.toFixed(2)}</p>
             </div>
           </Link>
-        ))} */}
+        ))}
       </div>
     </>
   );
