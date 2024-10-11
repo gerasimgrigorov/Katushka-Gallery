@@ -102,7 +102,7 @@ export default function Page() {
 
         <button
           onClick={applyFilters}
-          className="border rounded-lg p-2 bg-purple-800 hover:bg-purple-900 text-white mx-4 transition duration-300 mb-1 md:mx-1 md:mb-2"
+          className="border rounded-lg p-2 bg-violet-800 hover:bg-violet-700 text-white mx-4 transition duration-300 mb-1 md:mx-1 md:mb-2"
         >
           Filter
         </button>

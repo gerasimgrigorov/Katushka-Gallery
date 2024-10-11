@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Spinner from "../components/Spinner";
 import { useUser } from "../utils/context/UserContext";
 import { TbTruckDelivery } from "react-icons/tb";
 import { db } from "../services/firebaseConfig";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDoc, doc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -52,8 +53,9 @@ export default function CartPage() {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+
     try {
-      await addDoc(collection(db, "orders"), {
+      const orderRef = await addDoc(collection(db, "orders"), {
         userDetails: {
           name: shippingInfo.name,
           email: shippingInfo.email,
@@ -66,12 +68,25 @@ export default function CartPage() {
           id: item.id,
           name: item.name,
           price: item.price,
-          // image: item.imageUrl
+          image: item.imageUrl,
         })),
         status: "Pending",
         totalPrice: (totalPrice + shippingPrice).toFixed(2),
         timestamp: new Date(),
       });
+
+      const orderId = orderRef.id;
+
+      await Promise.all(
+        cart.map(async (item) => {
+          const paintingRef = doc(db, "paintings", item.id);
+          await updateDoc(paintingRef, {
+            status: "Ordered",
+            orderId: orderId,
+          });
+        })
+      );
+
       showAlert("Order successfully placed!", "success");
       setCart([]);
       router.push("/");
@@ -79,6 +94,7 @@ export default function CartPage() {
       showAlert("An error occured placing your order.");
       console.error("Error placing order: ", error);
     }
+
     setIsSubmitting(false);
   };
 
@@ -273,9 +289,9 @@ export default function CartPage() {
           {/* Checkout Button */}
           <button
             disabled={isEmpty || isSubmitting}
-            className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-600"
+            className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-600 flex justify-center"
           >
-            {isSubmitting ? "Placing Order..." : "Checkout"}
+            {isSubmitting ? <Spinner /> : "Checkout"}
           </button>
         </form>
       )}

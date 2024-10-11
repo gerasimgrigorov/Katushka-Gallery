@@ -29,7 +29,7 @@ function Page() {
         <button
           className={`px-3 mr-1 sm:mr-2 py-2 rounded-md text-sm sm:text-md ${
             activeTab === "managePaintings"
-              ? "bg-blue-600 text-white"
+              ? "bg-violet-800 text-white"
               : "bg-gray-300"
           }`}
           onClick={() => setActiveTab("managePaintings")}
@@ -39,7 +39,7 @@ function Page() {
         <button
           className={`px-3 py-2 rounded-md text-sm sm:text-md ${
             activeTab === "manageUsers"
-              ? "bg-blue-600 text-white"
+              ? "bg-violet-800 text-white"
               : "bg-gray-300"
           }`}
           onClick={() => setActiveTab("manageUsers")}
@@ -49,7 +49,7 @@ function Page() {
         <button
           className={`px-3 ml-1 sm:ml-2 py-2 rounded-md text-sm sm:text-md ${
             activeTab === "manageOrders"
-              ? "bg-blue-600 text-white"
+              ? "bg-violet-800 text-white"
               : "bg-gray-300"
           }`}
           onClick={() => setActiveTab("manageOrders")}

@@ -30,7 +30,6 @@ export default function Page() {
       <div className="container mx-auto px-2 sm:px-10 lg:px-14">
         <HeroSection />
 
-        {/* Hero Section */}
         {/* <div className="relative flex items-center justify-center py-6 lg:py-0">
           <div className="grid lg:grid-cols-[1fr_1.5fr_1fr] gap-2 sm:gap-4">
             <div className="flex my-auto flex-col gap-2 sm:gap-4 items-end hidden lg:flex">
@@ -86,7 +85,6 @@ export default function Page() {
           </div>
         </div> */}
 
-        {/* Featured section */}
         <h1 className="text-center text-3xl my-6">Featured</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 px-2 gap-6 lg:gap-4 2xl:gap-0 2xl:mx-12 sm:px-0 xl:px-14 ">
           {paintings.map((painting) => (
@@ -106,7 +104,6 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Artist Biography */}
       <div className="flex flex-col-reverse lg:flex-row items-center bg-gray-200 my-6 px-12 md:px-16 lg:px-20 py-8">
         <div className="flex justify-center lg:w-1/3">
           <Image

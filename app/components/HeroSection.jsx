@@ -71,7 +71,7 @@ export default function HeroSection() {
           return newVisible;
         });
 
-        const randomTime = Math.floor(Math.random() * (7000 - 4000 + 1)) + 3000;
+        const randomTime = Math.floor(Math.random() * (9000 - 4000 + 1)) + 3000;
         setTimeout(updateImage, randomTime);
       }, 1000);
     }

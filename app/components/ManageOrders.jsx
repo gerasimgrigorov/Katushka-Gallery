@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { db } from "../services/firebaseConfig"; // Import Firebase config
-import { doc, updateDoc, collection, getDocs, deleteDoc } from "firebase/firestore";
+import { db } from "../services/firebaseConfig"; 
+import { doc, updateDoc, collection, getDocs, deleteDoc, query, where, getDoc } from "firebase/firestore";
 import { useUser } from "../utils/context/UserContext";
 
 export default function ManageOrders() {
@@ -25,19 +25,48 @@ export default function ManageOrders() {
     fetchOrders();
   }, []);
 
-  // Update order status
   const updateOrderStatus = async (orderId, newStatus) => {
+    const q = query(collection(db, "paintings"), where("orderId", "==", orderId));
+    const paintingsSnapshot = await getDocs(q);
+  
     const orderRef = doc(db, "orders", orderId);
     await updateDoc(orderRef, { status: newStatus });
+  
+    if (newStatus === "Delivered") {
+      paintingsSnapshot.forEach(async (painting) => {
+        const paintingRef = doc(db, "paintings", painting.id);
+        await updateDoc(paintingRef, { status: "Sold" });
+      });
+    } else if (newStatus === "Cancelled") {
+      paintingsSnapshot.forEach(async (painting) => {
+        const paintingRef = doc(db, "paintings", painting.id);
+        await updateDoc(paintingRef, { status: "Available", orderId: null });
+      });
+    } else if (newStatus === "Pending" || "Shipped"){
+      paintingsSnapshot.forEach(async (painting) => {
+        const paintingRef = doc(db, "paintings", painting.id);
+        await updateDoc(paintingRef, { status: "Ordered" });
+      });
+    }
+
+    showAlert("Order status updated successfully.", "success")
+  
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
         order.id === orderId ? { ...order, status: newStatus } : order
       )
     );
-  };
+  };  
 
-  // Delete an order
   const deleteOrder = async (orderId) => {
+    const q = query(collection(db, "paintings"), where("orderId", "==", orderId))
+    const paintingsSnapshot = await getDocs(q)
+
+    paintingsSnapshot.forEach(async (painting) => {
+      const paintingRef = doc(db, "paintings", painting.id)
+      await updateDoc(paintingRef, { status: "Available", orderId: null})
+    })
+
     const orderRef = doc(db, "orders", orderId);
     await deleteDoc(orderRef);
     setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderId));

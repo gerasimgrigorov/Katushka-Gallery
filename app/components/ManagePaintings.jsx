@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { useUser } from "../utils/context/UserContext";
 import Image from "next/image";
+import Spinner from "./Spinner";
 
 export default function ManagePaintings() {
   const { showAlert } = useUser();
@@ -73,7 +74,7 @@ export default function ManagePaintings() {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress); // Show progress to the user
+        setUploadProgress(progress);
       },
       (error) => {
         console.error("Image upload failed:", error);
@@ -82,13 +83,12 @@ export default function ManagePaintings() {
         // Get the image URL from Firebase Storage after upload is complete
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-        // Save the painting metadata along with the image URL to Firestore
         await addDoc(collection(db, "paintings"), {
           name: paintingData.name,
           price: parseFloat(paintingData.price),
           category: paintingData.category,
-          description: paintingData.description || "", // Optional field
-          imageUrl: downloadURL, // Store the image URL in Firestore
+          description: paintingData.description || "",
+          imageUrl: downloadURL,
           status: "Available",
           createdAt: new Date(),
         });
@@ -124,7 +124,7 @@ export default function ManagePaintings() {
     const paintingRef = doc(db, "paintings", id);
     await updateDoc(paintingRef, updatedData);
     showAlert("Painting updated successfully!", "success");
-    await fetchPaintings(); // Refresh the painting list
+    await fetchPaintings();
   };
 
   if (loading) return <p className="text-center">Loading paintings...</p>;
@@ -204,13 +204,13 @@ export default function ManagePaintings() {
         <button
           disabled={isSubmitting}
           type="submit"
-          className="w-full mt-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 disabled:bg-gray-500"
+          className="w-full mt-4 py-2 bg-violet-800 text-white rounded-md hover:bg-violet-600 transition duration-300 disabled:bg-gray-500"
         >
-          {isSubmitting ? "Submitting..." : "Add Painting"}
+          {isSubmitting ? <Spinner/> : "Add Painting"}
         </button>
-        {uploadProgress > 0 && (
+        {/* {uploadProgress > 0 && (
           <div className="mt-2">Uploading: {Math.round(uploadProgress)}%</div>
-        )}
+        )} */}
       </form>
 
       {/* Display Current Paintings */}

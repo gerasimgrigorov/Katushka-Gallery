@@ -156,6 +156,7 @@ export default function PaintingPage({ params }) {
               />
               <p className="mt-2 text-center text-lg">{relatedPainting.name}</p>
               <p className="text-center text-sm">${relatedPainting.price.toFixed(2)}</p>
+              {(relatedPainting.status === "Sold" || relatedPainting.status === "Ordered") && <div className="absolute top-2 left-8 text-white px-2 rounded-md bg-red-500">{relatedPainting.status}</div>}
             </div>
           </Link>
         ))}
