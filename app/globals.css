@@ -39,6 +39,10 @@ body {
   max-width: 296px;
 }
 
+.painting-size{
+  min-width: 310px;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

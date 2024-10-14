@@ -76,7 +76,7 @@ export default function ManageOrders() {
   if (loading) return <p className="text-center">Loading orders...</p>;
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="sm:p-4 max-w-4xl mx-auto">
       <h2 className="text-2xl mb-4 text-start">Orders List</h2>
       {orders.length === 0 ? (
         <p className="text-center">No orders found.</p>

@@ -1,10 +1,18 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { auth, db } from "../services/firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, getDocs, query, collection, where } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  collection,
+  where,
+} from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import Spinner from "../components/Spinner";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -15,11 +23,12 @@ export default function Register() {
   });
 
   const [error, setError] = useState("");
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(""); 
+    setError("");
   };
 
   const validateEmail = (email) => {
@@ -36,12 +45,15 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!validateEmail(formData.email)) {
+      setIsLoading(false);
       setError("Invalid email format!");
       return;
     }
     if (formData.password !== formData.confirmPassword) {
+      setIsLoading(false);
       setError("Passwords do not match!");
       return;
     }
@@ -49,6 +61,7 @@ export default function Register() {
     try {
       const usernameExists = await checkIfUsernameExists(formData.username);
       if (usernameExists) {
+        setIsLoading(false);
         setError("Username already exists!");
         return;
       }
@@ -64,19 +77,21 @@ export default function Register() {
         uid: user.uid,
         username: formData.username,
         email: user.email,
-        role: "customer"
+        role: "customer",
       };
 
+      setIsLoading(false);
       await setDoc(doc(db, "users", user.uid), userDoc);
-      router.push("/")
+      router.push("/");
 
       // alert("Registration successful!");
-
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
+        setIsLoading(false);
         setError("Email already exists!");
       } else {
-        console.dir(error)
+        setIsLoading(false);
+        console.dir(error);
         setError(error.message);
       }
     }
@@ -145,10 +160,11 @@ export default function Register() {
             />
           </div>
           <button
+            disabled={isLoading}
             type="submit"
-            className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600"
+            className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-500"
           >
-            Register
+            {isLoading ? <Spinner /> : "Register"}
           </button>
         </form>
         <p className="text-center text-sm mt-4">

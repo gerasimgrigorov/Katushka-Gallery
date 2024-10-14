@@ -83,18 +83,18 @@ export default function ManageUsers() {
 
     try {
       const response = await fetch("/api/deleteUser", {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ uid: userId }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to delete user");
       }
-  
+
       const data = await response.json();
       showAlert(data.message, data.type);
       fetchUsers();
@@ -103,15 +103,16 @@ export default function ManageUsers() {
       showAlert(error.message, "error"); // Show error alert
     }
   };
-  
+
+  if (isLoading) return <p className="text-center">Loading users...</p>;
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="sm: p-4 max-w-4xl mx-auto">
       {/* <h2 className="text-2xl text-center mb-4">Manage Users</h2> */}
 
       <h3 className="text-2xl mb-4">User List</h3>
-      {isLoading ? (
-        <p className="text-center">Loading users...</p>
+      {users.length === 0 ? (
+        <p className="text-center">No users found.</p>
       ) : (
         <ul className="space-y-2">
           {users.map((user) => (

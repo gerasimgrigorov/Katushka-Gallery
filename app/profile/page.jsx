@@ -20,6 +20,7 @@ import {
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useUser } from "../utils/context/UserContext"; // Importing the User Context
+import Spinner from "../components/Spinner";
 
 export default function Profile() {
   const { currentUser, showAlert } = useUser(); // Accessing currentUser from context
@@ -227,7 +228,7 @@ export default function Profile() {
             className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-600"
             disabled={isLoading}
           >
-            {isLoading ? "Submitting..." : "Update Profile"}
+            {isLoading ? <Spinner/> : "Update Profile"}
           </button>
         </form>
       </div>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import { login } from "../services/authFunctions";
+import Spinner from "../components/Spinner";
 
 export default function Page() {
   const [formData, setFormData] = useState({
@@ -10,8 +11,9 @@ export default function Page() {
     password: "",
   });
 
-  const [error, setError] = useState(""); 
-  const router = useRouter(); 
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const validateForm = () => {
     if (!formData.email || !formData.password) {
@@ -34,15 +36,21 @@ export default function Page() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     setError("");
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      setIsLoading(false);
+      return;
+    }
 
     try {
       await login(formData.email, formData.password);
-
+      setIsLoading(false);
       router.push("/");
     } catch (err) {
+      setIsLoading(false);
       setError("Failed to log in. Please check your credentials.");
     }
   };
@@ -85,9 +93,9 @@ export default function Page() {
           </div>
           <button
             type="submit"
-            className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600"
+            className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-500"
           >
-            Login
+            {isLoading ? <Spinner /> : "Login"}
           </button>
         </form>
 

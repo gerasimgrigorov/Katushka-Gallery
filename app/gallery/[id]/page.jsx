@@ -2,11 +2,21 @@
 
 import Link from "next/link";
 import { db } from "../../services/firebaseConfig";
-import { getDoc, doc, getDocs, collection, query, where, limit } from "firebase/firestore";
+import {
+  getDoc,
+  doc,
+  getDocs,
+  collection,
+  query,
+  where,
+  limit,
+} from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useUser } from "@/app/utils/context/UserContext";
 import { useEffect, useState } from "react";
+import Painting from "@/app/components/Painting";
+import PaintingsGrid from "@/app/components/PaintingsGrid";
 
 export default function PaintingPage({ params }) {
   const { showAlert } = useUser();
@@ -30,9 +40,12 @@ export default function PaintingPage({ params }) {
           setPainting(paintingData);
           await fetchRelatedPaintings(paintingData.category, paintingData.id);
         } else {
-          console.error("No such painting!");
+          router.push("/");
+          showAlert("No such painting!");
         }
       } catch (error) {
+        router.push("/");
+        showAlert("Error finding your painting. Please try again later.");
         console.error("Error fetching painting:", error);
       } finally {
         setIsLoading(false);
@@ -52,14 +65,14 @@ export default function PaintingPage({ params }) {
             id: doc.id,
             ...doc.data(),
           }))
-          .filter((painting) => painting.id !== currentPaintingId); 
+          .filter((painting) => painting.id !== currentPaintingId);
 
         if (relatedResults.length < 4) {
           const additionalNeeded = 4 - relatedResults.length;
 
           const fallbackQuery = query(
             collection(db, "paintings"),
-            limit(additionalNeeded) 
+            limit(additionalNeeded)
           );
           const fallbackSnapshot = await getDocs(fallbackQuery);
           const fallbackResults = fallbackSnapshot.docs
@@ -67,12 +80,16 @@ export default function PaintingPage({ params }) {
               id: doc.id,
               ...doc.data(),
             }))
-            .filter((painting) => 
-              painting.id !== currentPaintingId && 
-              !relatedResults.some(rp => rp.id === painting.id) 
+            .filter(
+              (painting) =>
+                painting.id !== currentPaintingId &&
+                !relatedResults.some((rp) => rp.id === painting.id)
             );
 
-          const combinedResults = [...relatedResults, ...fallbackResults].slice(0, 4);
+          const combinedResults = [...relatedResults, ...fallbackResults].slice(
+            0,
+            4
+          );
           setRelatedPaintings(combinedResults);
         } else {
           setRelatedPaintings(relatedResults);
@@ -132,7 +149,9 @@ export default function PaintingPage({ params }) {
               : "This painting represents a unique blend of emotions and thoughts. It captures the essence of the artist's vision, inviting viewers to explore the depth of creativity and imagination."}
           </p>
           <button
-            disabled={painting.status === "Sold" || painting.status === "Ordered"}
+            disabled={
+              painting.status === "Sold" || painting.status === "Ordered"
+            }
             onClick={() => addToCart(painting)}
             className="mt-4 py-2 px-4 bg-purple-800 text-white font-semibold rounded-md shadow-lg hover:bg-purple-900 disabled:bg-gray-500 transition duration-300 w-full sm:w-3/5 lg:w-2/5"
           >
@@ -141,26 +160,12 @@ export default function PaintingPage({ params }) {
         </div>
       </div>
 
-      {/* Related Paintings Section */}
       <h1 className="text-center text-3xl my-6">Related Paintings</h1>
-      <div className="grid py-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 2xl:mx-12 px-0 md:px-12 xl:px-20">
+      <PaintingsGrid>
         {relatedPaintings.map((relatedPainting) => (
-          <Link key={relatedPainting.id} href={`/gallery/${relatedPainting.id}`}>
-            <div className="flex flex-col items-center mb-2 transition-transform transform hover:scale-105">
-              <Image
-                src={relatedPainting.imageUrl}
-                alt={relatedPainting.name}
-                width={280}
-                height={280}
-                className="shadow-lg"
-              />
-              <p className="mt-2 text-center text-lg">{relatedPainting.name}</p>
-              <p className="text-center text-sm">${relatedPainting.price.toFixed(2)}</p>
-              {(relatedPainting.status === "Sold" || relatedPainting.status === "Ordered") && <div className="absolute top-2 left-8 text-white px-2 rounded-md bg-red-500">{relatedPainting.status}</div>}
-            </div>
-          </Link>
+          <Painting key={relatedPainting.id} painting={relatedPainting} />
         ))}
-      </div>
+      </PaintingsGrid>
     </>
   );
 }
