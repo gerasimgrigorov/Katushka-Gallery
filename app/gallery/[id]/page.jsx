@@ -100,7 +100,7 @@ export default function PaintingPage({ params }) {
     };
 
     fetchPainting();
-  }, [id]);
+  }, [id, router, showAlert]);
 
   console.log(relatedPaintings);
 

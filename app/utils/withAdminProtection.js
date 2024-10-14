@@ -13,7 +13,7 @@ const withAdminProtection = (WrappedComponent) => {
         showAlert("Unauthorized.")
         router.push("/"); // Redirect to home or another page if not admin
       }
-    }, [currentUser, router]);
+    }, [currentUser, router, showAlert]);
 
     // Render the wrapped component if the user is an admin
     if (currentUser && currentUser.role === "admin") {

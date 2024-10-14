@@ -75,7 +75,7 @@ export default function Profile() {
     } else {
       router.push("/login");
     }
-  }, [currentUser, router]);
+  }, [currentUser, router, fetchUserData]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

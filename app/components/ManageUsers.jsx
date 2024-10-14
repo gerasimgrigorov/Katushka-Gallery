@@ -51,7 +51,7 @@ export default function ManageUsers() {
   useEffect(() => {
     fetchUsers();
     fetchCurrentUserRole(); // Fetch the current user's role on mount
-  }, []);
+  }, [fetchUsers]);
 
   const handleRoleChange = async (id, newRole) => {
     if (!isAdmin) {

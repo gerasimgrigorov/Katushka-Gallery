@@ -37,7 +37,7 @@ export default function HeroSection() {
         startImageRotation(index);
       });
     }
-  }, [squarePaintings]);
+  }, [squarePaintings, imageSlots, startImageRotation]);
 
   function startImageRotation(slotIndex) {
     function updateImage() {
@@ -84,7 +84,7 @@ export default function HeroSection() {
   }
 
   return (
-    <div className="relative flex items-center justify-center py-6 lg:py-0 mb-2">
+    <div className="relative flex items-center justify-center py-4 lg:py-0 mb-2">
       <div className="grid lg:grid-cols-[1fr_1.5fr_1fr] gap-2 sm:gap-4">
         <div className="flex my-auto flex-col gap-2 sm:gap-4 items-end hidden lg:flex">
           {imageSlots[0] && (
