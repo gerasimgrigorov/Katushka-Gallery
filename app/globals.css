@@ -40,7 +40,7 @@ body {
 }
 
 .painting-size{
-  min-width: 310px;
+  min-width: 300px;
 }
 
 @layer utilities {

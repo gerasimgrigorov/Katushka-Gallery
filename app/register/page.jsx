@@ -99,7 +99,7 @@ export default function Register() {
 
   return (
     <div className="container mx-auto p-6 flex items-center my-auto justify-center">
-      <div className="w-full max-w-md bg-white shadow-lg p-8 rounded-lg">
+      <div className="w-full max-w-md bg-white sm:shadow-lg p-1 sm:p-8 rounded-lg">
         <h2 className="text-3xl font-semibold text-center mb-6">Register</h2>
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">

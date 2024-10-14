@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { auth, db } from "../services/firebaseConfig";
+import { CiLogout } from "react-icons/ci";
+import { logout } from "../services/authFunctions";
 import {
   doc,
   getDoc,
@@ -19,11 +21,11 @@ import {
   reauthenticateWithCredential,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useUser } from "../utils/context/UserContext"; // Importing the User Context
+import { useUser } from "../utils/context/UserContext"; 
 import Spinner from "../components/Spinner";
 
 export default function Profile() {
-  const { currentUser, showAlert } = useUser(); // Accessing currentUser from context
+  const { currentUser, showAlert } = useUser(); 
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -36,7 +38,6 @@ export default function Profile() {
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
-  // Fetch user data from Firestore
   const fetchUserData = async (uid) => {
     try {
       const docRef = doc(db, "users", uid);
@@ -59,6 +60,15 @@ export default function Profile() {
     }
   };
 
+  async function handleLogout() {
+    try {
+      router.push("/");
+      await logout();
+    } catch (e) {
+      console.log("Logout failed: ", e);
+    }
+  }
+
   useEffect(() => {
     if (currentUser) {
       fetchUserData(currentUser.uid);
@@ -77,7 +87,6 @@ export default function Profile() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Input validations
     if (!validateEmail(formData.email)) {
       setError("Invalid email format!");
       setIsLoading(false);
@@ -91,7 +100,6 @@ export default function Profile() {
     }
 
     try {
-      // Check if username has changed
       if (formData.username !== currentUser.displayName) {
         const usernameExists = await checkIfUsernameExists(formData.username);
         if (usernameExists) {
@@ -101,15 +109,15 @@ export default function Profile() {
         }
       }
 
-      // Handle email changes - Send verification before updating
       if (formData.email !== currentUser.email) {
         await sendEmailVerification(currentUser);
-        setError("A verification email has been sent. Please verify before updating.");
+        setError(
+          "A verification email has been sent. Please verify before updating."
+        );
         setIsLoading(false);
         return;
       }
 
-      // Re-authenticate the user before updating the password
       if (formData.password) {
         const credential = EmailAuthProvider.credential(
           currentUser.email,
@@ -134,12 +142,10 @@ export default function Profile() {
     }
   };
 
-  // While loading the component, show a loading message
   if (isLoading) {
     return <p className="text-center mt-4">Loading...</p>;
   }
 
-  // If the user data is not available, show an appropriate message
   if (!formData.username || !formData.email) {
     return <p className="text-center mt-4">User data not available.</p>;
   }
@@ -147,12 +153,18 @@ export default function Profile() {
   return (
     <div className="container mx-auto p-6 flex items-center my-auto justify-center">
       <div className="w-full max-w-md bg-white shadow-lg p-8 rounded-lg">
-        <h2 className="text-3xl font-semibold text-center mb-6">Update Profile</h2>
+        <h2 className="text-3xl font-semibold text-center mb-6">
+          Update Profile
+        </h2>
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
-        {success && <p className="text-green-600 text-center mb-4">{success}</p>}
+        {success && (
+          <p className="text-green-600 text-center mb-4">{success}</p>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col space-y-2">
-            <label htmlFor="username" className="block font-semibold">Username:</label>
+            <label htmlFor="username" className="block font-semibold">
+              Username:
+            </label>
             <input
               type="text"
               id="username"
@@ -166,7 +178,9 @@ export default function Profile() {
           </div>
 
           <div className="flex flex-col space-y-2">
-            <label htmlFor="email" className="block font-semibold">Email:</label>
+            <label htmlFor="email" className="block font-semibold">
+              Email:
+            </label>
             <input
               type="email"
               id="email"
@@ -195,7 +209,9 @@ export default function Profile() {
           </div>
 
           <div className="flex flex-col space-y-2">
-            <label htmlFor="confirmPassword" className="block font-semibold">Confirm Password:</label>
+            <label htmlFor="confirmPassword" className="block font-semibold">
+              Confirm Password:
+            </label>
             <input
               type="password"
               id="confirmPassword"
@@ -228,9 +244,19 @@ export default function Profile() {
             className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-600"
             disabled={isLoading}
           >
-            {isLoading ? <Spinner/> : "Update Profile"}
+            {isLoading ? <Spinner /> : "Update Profile"}
           </button>
         </form>
+
+        <div className="flex justify-end mt-3">
+          <div
+            className="flex cursor-pointer hover:underline-offset-4 hover:underline"
+            onClick={handleLogout}
+          >
+            <p>Logout</p>
+            <CiLogout className="ml-1" />
+          </div>
+        </div>
       </div>
     </div>
   );

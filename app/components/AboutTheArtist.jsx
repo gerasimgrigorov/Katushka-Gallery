@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function AboutTheArtist() {
   return (
-    <div className="flex flex-col-reverse lg:flex-row items-center bg-gray-200 my-6 px-12 md:px-16 lg:px-20 py-8">
+    <div className="flex flex-col-reverse lg:flex-row items-center my-8 bg-gray-200 my-6 px-12 md:px-16 lg:px-20 py-8">
       <div className="flex justify-center lg:w-1/3">
         <Image
           src="/images/Artist.jpg"

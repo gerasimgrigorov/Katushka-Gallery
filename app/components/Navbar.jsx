@@ -7,8 +7,11 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { IoCartOutline } from "react-icons/io5";
 import { RiAdminLine } from "react-icons/ri";
+import { LuUser } from "react-icons/lu";
+import { TbLogout } from "react-icons/tb";
+import { FiShoppingCart } from "react-icons/fi";
+
 import { useUser } from "../utils/context/UserContext";
 import { logout } from "../services/authFunctions";
 import { useRouter } from "next/navigation";
@@ -25,11 +28,11 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const { currentUser, cart } = useUser();
-  const router = useRouter()
+  const router = useRouter();
 
   async function handleLogout() {
     try {
-      router.push("/")
+      router.push("/");
       await logout();
     } catch (e) {
       console.log("Logout failed: ", e);
@@ -41,7 +44,6 @@ export default function Navbar() {
       <Disclosure as="nav" className="bg-white">
         <div className="mx-auto max-w-7xl px-2 sm:px-10 lg:px-14">
           <div className="normal-font-styling relative flex h-16 items-center justify-between">
-            {/* Mobile menu button */}
             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
               <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 <span className="absolute -inset-0.5" />
@@ -57,11 +59,10 @@ export default function Navbar() {
               </DisclosureButton>
             </div>
 
-            {/* Logo and navigation links */}
             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
               <Link href={"/"}>
                 <div className="flex flex-shrink-0 items-center ">
-                  <svg
+                <svg
                     width="52"
                     height="52"
                     viewBox="0 0 56 56"
@@ -97,7 +98,6 @@ export default function Navbar() {
                 </div>
               </Link>
 
-              {/* Main navigation */}
               <div className="hidden sm:ml-4 sm:block my-auto">
                 <div className="flex space-x-3">
                   {navigation.map((item) => (
@@ -129,7 +129,7 @@ export default function Navbar() {
 
               <div className="relative pr-3">
                 <Link href={"/cart"}>
-                  <IoCartOutline aria-hidden="true" className="h-6 w-6" />
+                  <FiShoppingCart aria-hidden="true" className="h-6 w-6" />
                   {cart.length > 0 && (
                     <span className="absolute bottom-3 right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
                       {cart.length}
@@ -140,21 +140,18 @@ export default function Navbar() {
 
               {currentUser ? (
                 <>
-                  <div>
-                    <Link
-                      href={"/profile"}
-                      className="text-black border border-current hover:bg-gray-600 hover:text-white rounded-md px-3 py-2 text-sm font-medium duration-300"
-                    >
-                      Profile
+                  <div className="text-black pr-3">
+                    <Link href={"/profile"}>
+                      <LuUser aria-hidden="true" className="h-6 w-6" />
                     </Link>
                   </div>
 
-                  <div className="pl-2 hidden md:block">
+                  <div className="hidden md:block">
                     <button
                       onClick={handleLogout}
-                      className="text-white bg-gray-600 hover:bg-gray-800 rounded-md px-3 py-2 text-sm font-medium duration-300"
+                      className="text-black py-2"
                     >
-                      Logout
+                      <TbLogout aria-hidden="true" className="h-6 w-6" />
                     </button>
                   </div>
                 </>

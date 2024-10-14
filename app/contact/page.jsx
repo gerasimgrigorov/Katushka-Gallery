@@ -49,9 +49,7 @@ export default function ContactForm() {
 
     if (!formData.projectDescription.trim()) {
       newErrors.projectDescription = "Project description is required.";
-    }
-
-    if(formData.projectDescription.length < 50){
+    } else if (formData.projectDescription.length < 50){
       newErrors.projectDescription = "The message have to be at least 50 symbols.";
     }
 

@@ -29,7 +29,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="my-1 flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <div className="container mx-auto px-2 sm:px-10 lg:px-14">
         <HeroSection />
 
@@ -88,8 +88,8 @@ export default function Page() {
           </div>
         </div> */}
       </div>
-      
-      <h1 className="text-center text-3xl my-6">Featured</h1>
+
+      <h1 className="text-center text-3xl mt-6 mb-4">Featured</h1>
       <PaintingsGrid>
         {paintings.map((painting) => (
           <Painting key={painting.id} painting={painting} />

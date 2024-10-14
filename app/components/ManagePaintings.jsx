@@ -206,7 +206,7 @@ export default function ManagePaintings() {
           type="submit"
           className="w-full mt-4 py-2 bg-violet-800 text-white rounded-md hover:bg-violet-600 transition duration-300 disabled:bg-gray-500"
         >
-          {isSubmitting ? <Spinner/> : "Add Painting"}
+          {isSubmitting ? <Spinner /> : "Add Painting"}
         </button>
         {/* {uploadProgress > 0 && (
           <div className="mt-2">Uploading: {Math.round(uploadProgress)}%</div>
@@ -214,61 +214,65 @@ export default function ManagePaintings() {
       </form>
 
       {/* Display Current Paintings */}
-      <h2 className="text-2xl text-center mt-8 mb-4">Current Paintings</h2>
-      {paintings.length === 0 ? (
-        <p>No paintings found.</p>
-      ) : (
-        <table className="min-w-full bg-white border border-gray-300 mt-4">
-          <thead>
-            <tr>
-              <th className="border border-gray-300 p-2">Image</th>
-              <th className="border border-gray-300 p-2">Name</th>
-              <th className="border border-gray-300 p-2">Description</th>
-              <th className="border border-gray-300 p-2">Price</th>
-              <th className="border border-gray-300 p-2">Category</th>
-              <th className="border border-gray-300 p-2">Status</th>
-              <th className="border border-gray-300 p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paintings.map((painting) => (
-              <tr key={painting.id}>
-                <td className="border border-gray-300 justify-center py-1">
-                  <Image
-                    className="mx-auto"
-                    src={painting.imageUrl}
-                    alt={`${painting.name} - Image`}
-                    width={50}
-                    height={50}
-                  />{" "}
-                </td>
-                <td className="border border-gray-300 p-2">{painting.name}</td>
-                <td className="border border-gray-300 p-2">
-                  {painting.description || "No description."}
-                </td>
-                <td className="border border-gray-300 p-2">
-                  ${painting.price}
-                </td>
-                <td className="border border-gray-300 p-2">
-                  {painting.category}
-                </td>
-                <td className="border border-gray-300 p-2">
-                  {painting.status}
-                </td>
-                <td className="border border-gray-300 p-2">
-                  <button
-                    disabled={isSubmitting}
-                    onClick={() => handleDeletePainting(painting.id)}
-                    className="bg-red-700 rounded-md text-white p-1 hover:bg-red-600 transition duration-300 disabled:bg-gray-500"
-                  >
-                    Delete
-                  </button>
-                </td>
+      <h2 className="text-2xl text-center mt-6 mb-2">Current Paintings</h2>
+      <div className="overflow-x-auto">
+        {paintings.length === 0 ? (
+          <p>No paintings found.</p>
+        ) : (
+          <table className="min-w-full bg-white border border-gray-300 mt-4">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 p-2">Image</th>
+                <th className="border border-gray-300 p-2">Name</th>
+                <th className="border border-gray-300 p-2">Description</th>
+                <th className="border border-gray-300 p-2">Price</th>
+                <th className="border border-gray-300 p-2">Category</th>
+                <th className="border border-gray-300 p-2">Status</th>
+                <th className="border border-gray-300 p-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {paintings.map((painting) => (
+                <tr key={painting.id}>
+                  <td className="border border-gray-300 justify-center py-1">
+                    <Image
+                      className="mx-auto"
+                      src={painting.imageUrl}
+                      alt={`${painting.name} - Image`}
+                      width={50}
+                      height={50}
+                    />{" "}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    {painting.name}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    {painting.description || "No description."}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    ${painting.price}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    {painting.category}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    {painting.status}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    <button
+                      disabled={isSubmitting}
+                      onClick={() => handleDeletePainting(painting.id)}
+                      className="bg-red-700 rounded-md text-white p-1 hover:bg-red-600 transition duration-300 disabled:bg-gray-500"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }

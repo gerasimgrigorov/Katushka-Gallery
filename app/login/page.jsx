@@ -57,7 +57,7 @@ export default function Page() {
 
   return (
     <div className="container mx-auto p-6 flex items-center my-auto justify-center">
-      <div className="w-full max-w-md bg-white shadow-lg p-8 rounded-lg">
+      <div className="w-full max-w-md bg-white sm:shadow-lg p-1 sm:p-8 rounded-lg">
         <h2 className="text-3xl font-semibold text-center mb-6">Login</h2>
 
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
@@ -92,6 +92,7 @@ export default function Page() {
             />
           </div>
           <button
+            disabled={isLoading}
             type="submit"
             className="w-full py-2 bg-red-800 text-white rounded-md hover:bg-red-600 disabled:bg-gray-500"
           >

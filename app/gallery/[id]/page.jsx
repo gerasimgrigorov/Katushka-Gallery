@@ -160,12 +160,14 @@ export default function PaintingPage({ params }) {
         </div>
       </div>
 
+      <div className="flex flex-col items-center">
       <h1 className="text-center text-3xl my-6">Related Paintings</h1>
       <PaintingsGrid>
         {relatedPaintings.map((relatedPainting) => (
           <Painting key={relatedPainting.id} painting={relatedPainting} />
         ))}
       </PaintingsGrid>
+      </div>
     </>
   );
 }
