@@ -1,16 +1,20 @@
-"use client"
+"use client";
 
 import { collection, getDocs } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { db } from "../services/firebaseConfig";
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./Page.module.css"; 
+import styles from "./Page.module.css";
 
 export default function HeroSection() {
   const [squarePaintings, setSquarePaintings] = useState([]);
   const [imageSlots, setImageSlots] = useState([null, null, null, null]);
   const [isVisible, setIsVisible] = useState([true, true, true, true]);
+
+  const timeoutRef = useRef(null);
+
+  // console.log(imageSlots);
 
   useEffect(() => {
     async function fetchPaintings() {
@@ -21,7 +25,9 @@ export default function HeroSection() {
       }));
 
       const filteredSquarePaintings = allPaintings.filter(
-        (painting) => (!painting.width && !painting.height) && (painting.status !== "Sold" || "Ordered") && painting.name !== "Old scars");
+        (painting) =>
+          !painting.width && !painting.height && painting.name !== "Old scars"
+      );
 
       setSquarePaintings(filteredSquarePaintings);
 
@@ -40,35 +46,50 @@ export default function HeroSection() {
           newVisible[slotIndex] = false; // Set to false to trigger fade-out
           return newVisible;
         });
-  
+
         // After the fade-out effect (1 second), change the image and fade it back in
-        setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
           setImageSlots((prevSlots) => {
+            if (!Array.isArray(prevSlots)) {
+              console.error("prevSlots is not an array", prevSlots);
+              return [null, null, null, null]; // Return a default value
+            }
+
             const newSlots = [...prevSlots];
+
             let randomPainting =
-              squarePaintings[Math.floor(Math.random() * squarePaintings.length)];
-  
+              squarePaintings[
+                Math.floor(Math.random() * squarePaintings.length)
+              ];
+
             // Avoid duplicate images in the slots
             while (newSlots.includes(randomPainting)) {
-              randomPainting = squarePaintings[Math.floor(Math.random() * squarePaintings.length)];
+              randomPainting =
+                squarePaintings[
+                  Math.floor(Math.random() * squarePaintings.length)
+                ];
             }
-  
-            newSlots[slotIndex] = randomPainting;
+
+            newSlots[slotIndex] = randomPainting; // Assign the random painting to the slot
             return newSlots;
           });
-  
+
           // Fade the image back in
           setIsVisible((prevVisible) => {
             const newVisible = [...prevVisible];
             newVisible[slotIndex] = true; // Set to true to trigger fade-in
             return newVisible;
           });
-  
-          const randomTime = Math.floor(Math.random() * (9000 - 4000 + 1)) + 3000;
-          setTimeout(updateImage, randomTime);
+
+          const randomTime =
+            Math.floor(Math.random() * (16000 - 8000 + 1)) + 3000;
+
+          // Clear previous timeout
+          // clearTimeout(timeoutRef.current);
+          timeoutRef.current = setTimeout(updateImage, randomTime);
         }, 1000);
       }
-  
+
       updateImage();
     }
 
@@ -77,7 +98,75 @@ export default function HeroSection() {
         startImageRotation(index);
       });
     }
-  }, [squarePaintings, imageSlots]);
+
+    return () => {
+      clearTimeout(timeoutRef.current);
+    };
+  }, [squarePaintings]);
+
+  // useEffect(() => {
+  //   function startImageRotation(slotIndex) {
+  //     function updateImage() {
+  //       // Fade out the image
+  //       setIsVisible((prevVisible) => {
+  //         const newVisible = [...prevVisible];
+  //         newVisible[slotIndex] = false; // Set to false to trigger fade-out
+  //         return newVisible;
+  //       });
+
+  //       // After the fade-out effect (1 second), change the image and fade it back in
+  //       timeoutRef.current = setTimeout(() => {
+  //         setImageSlots((prevSlots) => {
+  //           const newSlots = [...prevSlots];
+
+  //           let randomPainting =
+  //             squarePaintings[Math.floor(Math.random() * squarePaintings.length)];
+
+  //           // Avoid duplicate images in the slots
+  //           while (newSlots.includes(randomPainting)) {
+  //             randomPainting = squarePaintings[Math.floor(Math.random() * squarePaintings.length)];
+  //           }
+
+  //           // let randomPainting;
+  //           // do {
+  //           //   randomPainting =
+  //           //     squarePaintings[
+  //           //       Math.floor(Math.random() * squarePaintings.length)
+  //           //     ];
+  //           // } while (newSlots.includes(randomPainting));
+
+  //           // newSlots[slotIndex] = randomPainting;
+  //           // return newSlots;
+  //         });
+
+  //         // Fade the image back in
+  //         setIsVisible((prevVisible) => {
+  //           const newVisible = [...prevVisible];
+  //           newVisible[slotIndex] = true; // Set to true to trigger fade-in
+  //           return newVisible;
+  //         });
+
+  //         const randomTime =
+  //           Math.floor(Math.random() * (16000 - 8000 + 1)) + 3000;
+
+  //         // clearTimeout(timeoutRef.current)
+  //         timeoutRef.current = setTimeout(updateImage, randomTime);
+  //       }, 1000);
+  //     }
+
+  //     updateImage();
+  //   }
+
+  //   if (squarePaintings.length > 0) {
+  //     imageSlots.forEach((_, index) => {
+  //       startImageRotation(index);
+  //     });
+  //   }
+
+  //   return () => {
+  //     clearTimeout(timeoutRef.current);
+  //   };
+  // }, [squarePaintings, imageSlots]);
 
   function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
@@ -88,7 +177,11 @@ export default function HeroSection() {
       <div className="grid lg:grid-cols-[1fr_1.5fr_1fr] gap-2 sm:gap-4">
         <div className="flex my-auto flex-col gap-2 sm:gap-4 items-end hidden lg:flex">
           {imageSlots[0] && (
-            <div className={isVisible[0] ? styles["image-fade"] : styles["image-hidden"]}>
+            <div
+              className={
+                isVisible[0] ? styles["image-fade"] : styles["image-hidden"]
+              }
+            >
               <Image
                 key={imageSlots[0].id}
                 src={imageSlots[0].imageUrl}
@@ -100,7 +193,11 @@ export default function HeroSection() {
             </div>
           )}
           {imageSlots[1] && (
-            <div className={isVisible[1] ? styles["image-fade"] : styles["image-hidden"]}>
+            <div
+              className={
+                isVisible[1] ? styles["image-fade"] : styles["image-hidden"]
+              }
+            >
               <Image
                 key={imageSlots[1].id}
                 src={imageSlots[1].imageUrl}
@@ -125,7 +222,11 @@ export default function HeroSection() {
 
         <div className="flex my-auto flex-col gap-2 sm:gap-4 items-start hidden lg:flex">
           {imageSlots[2] && (
-            <div className={isVisible[2] ? styles["image-fade"] : styles["image-hidden"]}>
+            <div
+              className={
+                isVisible[2] ? styles["image-fade"] : styles["image-hidden"]
+              }
+            >
               <Image
                 key={imageSlots[2].id}
                 src={imageSlots[2].imageUrl}
@@ -137,7 +238,11 @@ export default function HeroSection() {
             </div>
           )}
           {imageSlots[3] && (
-            <div className={isVisible[3] ? styles["image-fade"] : styles["image-hidden"]}>
+            <div
+              className={
+                isVisible[3] ? styles["image-fade"] : styles["image-hidden"]
+              }
+            >
               <Image
                 key={imageSlots[3].id}
                 src={imageSlots[3].imageUrl}
@@ -151,7 +256,8 @@ export default function HeroSection() {
         </div>
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-70 rounded-lg">
           <p className="text-black text-center mb-1">
-            "In a world where dreams and reality intertwine, we venture beyond the ordinary,
+            "In a world where dreams and reality intertwine, we venture beyond
+            the ordinary,
             <br /> embracing the beauty of the unknown."
           </p>
           <Link
