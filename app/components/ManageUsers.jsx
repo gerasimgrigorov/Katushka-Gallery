@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { db, auth } from "../services/firebaseConfig";
 import {
   collection,
@@ -16,11 +16,11 @@ import { useUser } from "../utils/context/UserContext";
 export default function ManageUsers() {
   const { showAlert } = useUser();
   const [users, setUsers] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false); // State to track admin status
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchUsers = async () => {
-    setIsLoading(true); // Set loading state
+  const fetchUsers = useCallback(async () => {
+    setIsLoading(true);
     try {
       const usersCollection = collection(db, "users");
       const userSnapshot = await getDocs(usersCollection);
@@ -33,24 +33,24 @@ export default function ManageUsers() {
       console.error("Error fetching users:", error);
       showAlert("Error fetching users.", "error");
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
-  };
-
-  const fetchCurrentUserRole = async () => {
-    const user = auth.currentUser;
-    if (user) {
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (userDoc.exists()) {
-        const { role } = userDoc.data();
-        setIsAdmin(role === "admin"); // Set isAdmin based on user's role
-      }
-    }
-  };
+  }, [showAlert]);
 
   useEffect(() => {
+    const fetchCurrentUserRole = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const { role } = userDoc.data();
+          setIsAdmin(role === "admin");
+        }
+      }
+    };
+
     fetchUsers();
-    fetchCurrentUserRole(); // Fetch the current user's role on mount
+    fetchCurrentUserRole();
   }, [fetchUsers]);
 
   const handleRoleChange = async (id, newRole) => {
@@ -62,12 +62,12 @@ export default function ManageUsers() {
     try {
       const userDoc = doc(db, "users", id);
       const currentUserDoc = await getDoc(userDoc);
-      const currentRole = currentUserDoc.data().role; // Get current role
+      const currentRole = currentUserDoc.data().role;
 
       if (currentRole !== newRole) {
         await updateDoc(userDoc, { role: newRole });
         showAlert("User role updated successfully.", "success");
-        fetchUsers(); // Refresh users after update
+        fetchUsers();
       }
     } catch (error) {
       console.error("Error updating user role: ", error);
@@ -100,7 +100,7 @@ export default function ManageUsers() {
       fetchUsers();
     } catch (error) {
       console.error("Error deleting user:", error);
-      showAlert(error.message, "error"); // Show error alert
+      showAlert(error.message, "error");
     }
   };
 

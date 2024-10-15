@@ -21,11 +21,11 @@ import {
   reauthenticateWithCredential,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useUser } from "../utils/context/UserContext"; 
+import { useUser } from "../utils/context/UserContext";
 import Spinner from "../components/Spinner";
 
 export default function Profile() {
-  const { currentUser, showAlert } = useUser(); 
+  const { currentUser, showAlert } = useUser();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -38,28 +38,6 @@ export default function Profile() {
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
-  const fetchUserData = async (uid) => {
-    try {
-      const docRef = doc(db, "users", uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setFormData((prevData) => ({
-          ...prevData,
-          username: docSnap.data().username,
-          email: docSnap.data().email,
-        }));
-      } else {
-        showAlert("User data not found. It may have been deleted.");
-        router.push("/login");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Failed to fetch user data.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   async function handleLogout() {
     try {
       router.push("/");
@@ -70,12 +48,34 @@ export default function Profile() {
   }
 
   useEffect(() => {
+    const fetchUserData = async (uid) => {
+      try {
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setFormData((prevData) => ({
+            ...prevData,
+            username: docSnap.data().username,
+            email: docSnap.data().email,
+          }));
+        } else {
+          showAlert("User data not found. It may have been deleted.");
+          router.push("/login");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch user data.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     if (currentUser) {
       fetchUserData(currentUser.uid);
     } else {
       router.push("/login");
     }
-  }, [currentUser, router, fetchUserData]);
+  }, [currentUser, router]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

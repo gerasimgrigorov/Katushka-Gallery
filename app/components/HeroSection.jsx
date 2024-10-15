@@ -32,52 +32,52 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
+    function startImageRotation(slotIndex) {
+      function updateImage() {
+        // Fade out the image
+        setIsVisible((prevVisible) => {
+          const newVisible = [...prevVisible];
+          newVisible[slotIndex] = false; // Set to false to trigger fade-out
+          return newVisible;
+        });
+  
+        // After the fade-out effect (1 second), change the image and fade it back in
+        setTimeout(() => {
+          setImageSlots((prevSlots) => {
+            const newSlots = [...prevSlots];
+            let randomPainting =
+              squarePaintings[Math.floor(Math.random() * squarePaintings.length)];
+  
+            // Avoid duplicate images in the slots
+            while (newSlots.includes(randomPainting)) {
+              randomPainting = squarePaintings[Math.floor(Math.random() * squarePaintings.length)];
+            }
+  
+            newSlots[slotIndex] = randomPainting;
+            return newSlots;
+          });
+  
+          // Fade the image back in
+          setIsVisible((prevVisible) => {
+            const newVisible = [...prevVisible];
+            newVisible[slotIndex] = true; // Set to true to trigger fade-in
+            return newVisible;
+          });
+  
+          const randomTime = Math.floor(Math.random() * (9000 - 4000 + 1)) + 3000;
+          setTimeout(updateImage, randomTime);
+        }, 1000);
+      }
+  
+      updateImage();
+    }
+
     if (squarePaintings.length > 0) {
       imageSlots.forEach((_, index) => {
         startImageRotation(index);
       });
     }
-  }, [squarePaintings, imageSlots, startImageRotation]);
-
-  function startImageRotation(slotIndex) {
-    function updateImage() {
-      // Fade out the image
-      setIsVisible((prevVisible) => {
-        const newVisible = [...prevVisible];
-        newVisible[slotIndex] = false; // Set to false to trigger fade-out
-        return newVisible;
-      });
-
-      // After the fade-out effect (1 second), change the image and fade it back in
-      setTimeout(() => {
-        setImageSlots((prevSlots) => {
-          const newSlots = [...prevSlots];
-          let randomPainting =
-            squarePaintings[Math.floor(Math.random() * squarePaintings.length)];
-
-          // Avoid duplicate images in the slots
-          while (newSlots.includes(randomPainting)) {
-            randomPainting = squarePaintings[Math.floor(Math.random() * squarePaintings.length)];
-          }
-
-          newSlots[slotIndex] = randomPainting;
-          return newSlots;
-        });
-
-        // Fade the image back in
-        setIsVisible((prevVisible) => {
-          const newVisible = [...prevVisible];
-          newVisible[slotIndex] = true; // Set to true to trigger fade-in
-          return newVisible;
-        });
-
-        const randomTime = Math.floor(Math.random() * (9000 - 4000 + 1)) + 3000;
-        setTimeout(updateImage, randomTime);
-      }, 1000);
-    }
-
-    updateImage();
-  }
+  }, [squarePaintings, imageSlots]);
 
   function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
